@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lock, Mail } from 'lucide-react';
-import { login } from '@/actions/authActions';
+import { loginAction } from '@/actions/authActions';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/middleware/authContext';
 const AdminLogin = () => {
+    const {login}=useAuth()
     const navigate=useNavigate()
     const [credentials, setCredentials] = useState({
         email: '',
@@ -28,15 +29,15 @@ const AdminLogin = () => {
         e.preventDefault();
         console.log('Login attempted:', credentials);
         try {
-            const res=await login(credentials);
+            const res=await loginAction(credentials);
             console.log(res)
-            localStorage.setItem('token',res.token)
+            login(res)
             toast({
                 title: 'Login Successful',
                 description: 'Welcome back, Admin!',
                 status: 'success'
             });
-            navigate('/admin/jobs')
+            navigate('/admin/')
         } catch (error) {
             console.log(error)
             toast({

@@ -6,10 +6,11 @@ import { ChildrenProps } from "@/types/globals";
 
 import { APP_NAME } from "@/lib/constants";
 import { Toaster } from "../ui/toaster";
+import { AuthProvider } from "@/middleware/authContext";
 
 function providers({ children }: ChildrenProps) {
   return (
-  
+    <AuthProvider>
     <RecoilRoot>
      
       <ThemeProvider defaultTheme="system" storageKey={`${APP_NAME}-ui-theme`}>
@@ -17,6 +18,7 @@ function providers({ children }: ChildrenProps) {
         <Toaster/>
       </ThemeProvider>
     </RecoilRoot>
+    </AuthProvider>
    
 
   );

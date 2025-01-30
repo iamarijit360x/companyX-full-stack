@@ -8,6 +8,7 @@ const jobsRoute=require('../api/routes/jobsRoutes.js');
 const jobApplicationRoute=require('../api/routes/jobApplicationRoutes.js');
 const blogRoute=require('../api/routes/blogsRoutes.js');
 const authRoute=require('../api/routes/authRoutes.js');
+const dashboardRoute=require('../api/routes/dashboardRoutes.js')
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/files/',fileRoute);
 app.use('/api/jobs/',jobsRoute);
 app.use('/api/job-application/',jobApplicationRoute);
 app.use('/api/blog/',blogRoute);
+app.use('/api/dashboard/',dashboardRoute)
 app.use((error, req, res, next) => {
     res.status(500).send({message:'Server Error',error});
 });

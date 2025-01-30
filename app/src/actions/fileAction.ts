@@ -1,4 +1,5 @@
 import { apiFile } from '@/api/fileAPI';
+import axiosInstance from '@/middleware/axiosInterCenptor';
 import axios from 'axios';
 
 export const uploadPdf = async (file: File) => {
@@ -18,7 +19,7 @@ export const uploadPdf = async (file: File) => {
 };
 export const downloadPdf = async (fileId: string) => {
     try {
-        const response = await axios.get(`${apiFile}/${fileId}`, {
+        const response = await axiosInstance.get(`${apiFile}/${fileId}`, {
             responseType: 'blob',
         });
 

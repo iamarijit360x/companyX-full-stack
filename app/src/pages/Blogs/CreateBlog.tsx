@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from '@/hooks/use-toast';
 import { createBlog } from '@/actions/blogActions';
+import { useAuth } from '@/middleware/authContext';
 
 const CreateBlog = () => {
+  const {isAuthenticated}=useAuth()
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);

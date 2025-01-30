@@ -1,6 +1,6 @@
 const express = require('express');
-const { upload } = require('../database/config');
 const { createBlog, editBlog, listBlogs, viewBlog, deleteBlog } = require('../controllers/Blog');
+const { verifyUser, verifyAdmin } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -11,7 +11,8 @@ const router = express.Router();
 
 router.get('/:id', viewBlog);
 router.get('/',listBlogs)
-// TODO Admin
+router.use(verifyUser);
+router.use(verifyAdmin);
 router.post('/',createBlog);
 router.put('/:id', editBlog);
 router.delete('/:id', deleteBlog);

@@ -1,4 +1,5 @@
 import { apiJobApplication, apiRejectAllCandidate } from '@/api/jobApplication';
+import axiosInstance from '@/middleware/axiosInterCenptor';
 import axios from 'axios';
 
 export const applyJob = async (applicationData: any) => {
@@ -13,7 +14,7 @@ export const applyJob = async (applicationData: any) => {
 
 export const listApplicants = async (jobId, page, limit) => {
     try {
-        const response = await axios.get(`${apiJobApplication}${jobId}`, {
+        const response = await axiosInstance.get(`${apiJobApplication}${jobId}`, {
             params: { page, limit }
         });
         return response.data;
@@ -25,7 +26,7 @@ export const listApplicants = async (jobId, page, limit) => {
 
 export const selectCandidate = async (applicationId) => {
     try {
-        const response = await axios.patch(`${apiJobApplication}${applicationId}`);
+        const response = await axiosInstance.patch(`${apiJobApplication}${applicationId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching applicants:', error);
@@ -34,7 +35,7 @@ export const selectCandidate = async (applicationId) => {
 };
 export const rejectAllCandidates = async (jobId) => {
     try {
-        const response = await axios.patch(`${apiRejectAllCandidate}/${jobId}`);
+        const response = await axiosInstance.patch(`${apiRejectAllCandidate}/${jobId}`);
         return response.data;
     } catch (error) {
         console.error('Error rejecting all candidates:', error);

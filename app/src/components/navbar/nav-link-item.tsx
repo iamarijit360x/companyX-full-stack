@@ -1,4 +1,6 @@
- const NavLinkItem = ({ title, icon, redirect }: NavLinkItemProps) => {
+import { Link } from "lucide-react";
+
+ const NavLinkItem = ({ title, icon, redirect }) => {
   const Icon = icon;
 
   return (

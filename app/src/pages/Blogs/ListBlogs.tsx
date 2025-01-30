@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
@@ -8,8 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { List, Grid } from 'lucide-react';
+import { useAuth } from '@/middleware/authContext';
 
 const BlogList = () => {
+    const {isAuthenticated}=useAuth();
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -57,7 +58,7 @@ const BlogList = () => {
                             <Grid className="h-4 w-4" />
                         </ToggleGroupItem>
                     </ToggleGroup>
-                    <Button onClick={() => navigate('/admin/create-blog')}>Create Blog</Button>
+                   { isAuthenticated && <Button onClick={() => navigate('/admin/create-blog')}>Create Blog</Button>}
                 </div>
             </div>
 

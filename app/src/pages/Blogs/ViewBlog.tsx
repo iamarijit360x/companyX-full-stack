@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User } from 'lucide-react';
-import { viewBlog } from '@/actions/blogActions';
+import { deleteBlog, viewBlog } from '@/actions/blogActions';
 
 interface Blog {
   id: string;
@@ -81,7 +80,7 @@ const BlogView = () => {
               onClick={async () => {
                 if (window.confirm('Are you sure you want to delete this blog post?')) {
                   try {
-                    await axios.delete(`/api/blog/${id}`);
+                    await deleteBlog(id)
                     navigate('/blogs');
                   } catch (err) {
                     alert('Failed to delete blog post');

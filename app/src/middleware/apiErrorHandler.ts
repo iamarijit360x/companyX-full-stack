@@ -23,7 +23,7 @@ const apiErrorHandler = () => (next) => (action) => {
     }
 
 
-  S
+  
   }
   return next(action);
 };

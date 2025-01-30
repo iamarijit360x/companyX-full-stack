@@ -5,15 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import BlogView from './ViewBlog';
+import { editBlog, viewBlog } from '@/actions/blogActions';
 
-interface Blog {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-}
+
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -33,8 +30,8 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await axios.get(`/api/blogs/${id}`);
-        setFormData(response.data);
+        const response = await viewBlog(id);
+        setFormData(response);
       } catch (err) {
         setError('Failed to fetch blog post');
         toast({
@@ -50,7 +47,7 @@ const EditBlog = () => {
     fetchBlog();
   }, [id, toast]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -72,14 +69,14 @@ const EditBlog = () => {
 
     try {
       setSaving(true);
-      await axios.put(`/api/blogs/${id}`, formData);
+      await editBlog(id,formData);
       
       toast({
         title: "Success",
         description: "Blog post updated successfully!"
       });
       
-      navigate(`/blogs/${id}`);
+      navigate(`/blogs/`);
     } catch (error) {
       toast({
         title: "Error",

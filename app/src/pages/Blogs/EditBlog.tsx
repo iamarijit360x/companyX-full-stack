@@ -20,6 +20,14 @@ const EditBlog = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  interface Blog {
+    id: string;
+    title: string;
+    content: string;
+    author: string;
+  }
+  
   const [formData, setFormData] = useState<Blog>({
     id: '',
     title: '',
@@ -47,7 +55,7 @@ const EditBlog = () => {
     fetchBlog();
   }, [id, toast]);
 
-  const handleChange = () => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,

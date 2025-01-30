@@ -1,21 +1,21 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableHead, 
-    TableHeader, 
-    TableRow 
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { 
-    Search, 
-    Filter, 
-    Eye, 
-    Download 
+import {
+    Search,
+    Filter,
+    Eye,
+    Download
 } from 'lucide-react';
 import { listApplicants, rejectAllCandidates } from '@/actions/jobApplication';
 import { downloadPdf } from '@/actions/fileAction';
@@ -29,7 +29,7 @@ const JobApplicantsList = () => {
     const [statusFilter, setStatusFilter] = useState('');
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const [totalPages, setTotalPages]=useState(0)
+    const [totalPages, setTotalPages] = useState(0)
     const fetchApplicants = async () => {
         try {
             const response = await listApplicants(jobId, page, limit);
@@ -44,8 +44,8 @@ const JobApplicantsList = () => {
     }, [jobId, page, limit]);
 
     const filteredApplicants = useMemo(() => {
-        return applicants.filter(applicant => 
-            (searchTerm === '' || 
+        return applicants.filter(applicant =>
+            (searchTerm === '' ||
                 applicant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 applicant.email.toLowerCase().includes(searchTerm.toLowerCase())
             ) &&
@@ -66,7 +66,7 @@ const JobApplicantsList = () => {
 
     const handleSelectCandidate = async (applicantId) => {
         try {
-             await selectCandidate(applicantId);
+            await selectCandidate(applicantId);
             fetchApplicants();
             console.log(`Selected candidate ${applicantId}`);
         } catch (error) {
@@ -87,9 +87,10 @@ const JobApplicantsList = () => {
             }
         }
     };
+    const MotionTableRow = motion(TableRow);
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -99,8 +100,8 @@ const JobApplicantsList = () => {
 
             <div className="flex mb-4 space-x-2">
                 <div className="relative flex-grow">
-                    <Input 
-                        placeholder="Search applicants..." 
+                    <Input
+                        placeholder="Search applicants..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
@@ -130,61 +131,53 @@ const JobApplicantsList = () => {
                 <TableBody>
                     <AnimatePresence>
                         {filteredApplicants.map((applicant) => (
-                            <motion.tr
+                            <MotionTableRow
                                 key={applicant.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                                 transition={{ duration: 0.3 }}
-                                as={TableRow}
                             >
                                 <TableCell>{applicant.name}</TableCell>
                                 <TableCell>{applicant.email}</TableCell>
                                 <TableCell>{applicant.phone}</TableCell>
                                 <TableCell>{convertISOToDate(applicant.appliedAt)}</TableCell>
                                 <TableCell>
-                                    <span className={`
-                                        px-2 py-1 rounded-full text-xs
-                                        ${applicant.status === 'Interview Scheduled' ? 'bg-blue-100 text-blue-800' : 
-                                            applicant.status === 'Under Review' ? 'bg-yellow-100 text-yellow-800' : 
-                                            'bg-green-100 text-green-800'}
-                                    `}>
+                                    <span
+                                        className={`
+            px-2 py-1 rounded-full text-xs
+            ${applicant.status === 'Interview Scheduled' ? 'bg-blue-100 text-blue-800' :
+                                                applicant.status === 'Under Review' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-green-100 text-green-800'}
+          `}
+                                    >
                                         {applicant.status}
                                     </span>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex space-x-2">
-                                        <Button 
-                                            variant="outline" 
-                                            size="icon"
-                                            onClick={() => handleViewDetails(applicant)}
-                                        >
+                                        <Button variant="outline" size="icon" onClick={() => handleViewDetails(applicant)}>
                                             <Eye className="h-4 w-4" />
                                         </Button>
-                                        <Button 
-                                            variant="outline" 
-                                            size="icon"
-                                            onClick={() => handleDownloadResume(applicant)}
-                                        >
+                                        <Button variant="outline" size="icon" onClick={() => handleDownloadResume(applicant)}>
                                             <Download className="h-4 w-4" />
                                         </Button>
-                                       {applicant.status ==='In Progress' && <Button 
-                                            variant="outline" 
-                                            size="icon"
-                                            onClick={() => handleSelectCandidate(applicant._id)}
-                                        >
-                                            Select
-                                        </Button>}
+                                        {applicant.status === 'In Progress' && (
+                                            <Button variant="outline" size="icon" onClick={() => handleSelectCandidate(applicant._id)}>
+                                                Select
+                                            </Button>
+                                        )}
                                     </div>
                                 </TableCell>
-                            </motion.tr>
+                            </MotionTableRow>
                         ))}
                     </AnimatePresence>
+
                 </TableBody>
             </Table>
 
             {filteredApplicants.length === 0 && (
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="text-center text-gray-500 mt-4"

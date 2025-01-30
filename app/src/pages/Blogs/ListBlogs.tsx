@@ -10,7 +10,7 @@ import { List, Grid } from 'lucide-react';
 import { useAuth } from '@/middleware/authContext';
 
 const BlogList = () => {
-    const {isAuthenticated}=useAuth();
+    const { isAuthenticated } = useAuth();
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -58,7 +58,7 @@ const BlogList = () => {
                             <Grid className="h-4 w-4" />
                         </ToggleGroupItem>
                     </ToggleGroup>
-                   { isAuthenticated && <Button onClick={() => navigate('/admin/create-blog')}>Create Blog</Button>}
+                    {isAuthenticated && <Button onClick={() => navigate('/admin/create-blog')}>Create Blog</Button>}
                 </div>
             </div>
 
@@ -85,12 +85,16 @@ const BlogList = () => {
 
             <Pagination className="mt-6">
                 <PaginationContent>
+                    {/* Previous Button */}
                     <PaginationItem>
                         <PaginationPrevious
                             onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
+                            aria-disabled={currentPage === 1}
+                            className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                         />
                     </PaginationItem>
+
+                    {/* Page Numbers */}
                     {Array.from({ length: totalPages }, (_, index) => (
                         <PaginationItem key={index + 1}>
                             <PaginationLink
@@ -101,14 +105,18 @@ const BlogList = () => {
                             </PaginationLink>
                         </PaginationItem>
                     ))}
+
+                    {/* Next Button */}
                     <PaginationItem>
                         <PaginationNext
                             onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
+                            aria-disabled={currentPage === totalPages}
+                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                         />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
+
         </motion.div>
     );
 };

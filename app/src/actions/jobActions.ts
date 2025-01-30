@@ -32,9 +32,9 @@ export const createJob =async (jobData) => {
     }
 
 // Action to fetch jobs
-export const fetchJobs =  async () => {
+export const fetchJobs =  async (page,limit) => {
         try {
-            const response = await axiosInstance.get(`${apiJobPosting}`);
+            const response = await axiosInstance.get(`${apiJobPosting}?page=${page}&limit=${limit}`);
             
             return response.data;
         } catch (error) {

@@ -35,7 +35,6 @@ const AdminLogin = () => {
             toast({
                 title: 'Login Successful',
                 description: 'Welcome back, Admin!',
-                status: 'success'
             });
             navigate('/admin/')
         } catch (error) {
@@ -43,7 +42,6 @@ const AdminLogin = () => {
             toast({
                 title: 'Login Failed',
                 description: 'Please check your credentials and try again.',
-                status: 'error'
             });
         }
     };

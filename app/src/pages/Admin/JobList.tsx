@@ -25,12 +25,15 @@ const AdminJobsList = () => {
         key: 'createdAt',
         direction: 'descending'
     });
-    const navigate = useNavigate(); // Initialize the navigate function
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit, setLimit] = useState(10); // Default limit
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadJobs = async () => {
             try {
-                const response = await fetchJobs();
+                const response = await fetchJobs(currentPage, limit);
                 const data = response.data.jobs.map(job => ({
                     id: job._id,
                     title: job.title,
@@ -39,13 +42,14 @@ const AdminJobsList = () => {
                     status: job.type
                 }));
                 setJobs(data);
+                setTotalPages(response.data.totalPages); // Assuming the API returns totalPages
             } catch (error) {
                 console.error('Error fetching jobs:', error);
             }
         };
 
         loadJobs();
-    }, []);
+    }, [currentPage, limit]);
 
     const sortedJobs = useMemo(() => {
         let sortableJobs = [...jobs];
@@ -88,7 +92,16 @@ const AdminJobsList = () => {
     };
 
     const handleRowClick = (jobId) => {
-        navigate(`/admin/jobs/${jobId}`); // Navigate to the job applicants list page
+        navigate(`/admin/jobs/${jobId}`);
+    };
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const handleLimitChange = (newLimit) => {
+        setLimit(newLimit);
+        setCurrentPage(1); // Reset to the first page when changing the limit
     };
 
     return (
@@ -178,6 +191,37 @@ const AdminJobsList = () => {
                     No jobs found
                 </div>
             )}
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+                <div className="flex items-center space-x-2">
+                    <span>Rows per page:</span>
+                    <select
+                        value={limit}
+                        onChange={(e) => handleLimitChange(Number(e.target.value))}
+                        className="border rounded p-1"
+                    >
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                    </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </Button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <Button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };

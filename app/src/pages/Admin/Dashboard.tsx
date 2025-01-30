@@ -15,30 +15,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchRecentBlogs, fetchRecentJobs, fetchStats } from '@/actions/dashBoardAction';
+import { fetchRecentBlogs, fetchRecentJobs, fetchStats } from '@/actions/dashboardAction';
 import { useNavigate } from 'react-router-dom';
 
-const Dashboard = () => {
-  const [dateRange, setDateRange] = useState('thisWeek');
-  const [stats, setStats] = useState({});
-  const [recentJobs, setRecentJobs] = useState([]);
-  const [recentBlogs, setRecentBlogs] = useState([]);
-  const navigate=useNavigate()
+// Define types
+interface Stats {
+  totalBlogs: number;
+  totalJobs: number;
+  activeJobPostings: number;
+  totalApplications: number;
+}
+
+interface Job {
+  _id: string;
+  title: string;
+  date: string;
+  applications: number;
+}
+
+interface Blog {
+  _id: string;
+  title: string;
+  date: string;
+  views: number;
+}
+
+const Dashboard: React.FC = () => {
+  const [dateRange, setDateRange] = useState<string>('thisWeek');
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [recentJobs, setRecentJobs] = useState<Job[]>([]);
+  const [recentBlogs, setRecentBlogs] = useState<Blog[]>([]);
+  const navigate = useNavigate();
 
   // Fetch stats
   useEffect(() => {
     fetchStats(dateRange)
-      .then((data) => setStats(data));
+      .then((data) => setStats(data))
+      .catch(() => setStats(null)); // Handle error case
   }, [dateRange]);
-
-
 
   useEffect(() => {
     fetchRecentJobs()
-      .then((data) => setRecentJobs(data));
+      .then((data) => setRecentJobs(data))
+      .catch(() => setRecentJobs([]));
 
     fetchRecentBlogs()
-      .then((data) => setRecentBlogs(data));
+      .then((data) => setRecentBlogs(data))
+      .catch(() => setRecentBlogs([]));
   }, []);
 
   return (
@@ -67,7 +90,7 @@ const Dashboard = () => {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalBlogs}</div>
+            <div className="text-2xl font-bold">{stats?.totalBlogs ?? 0}</div>
           </CardContent>
         </Card>
 
@@ -77,7 +100,7 @@ const Dashboard = () => {
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalJobs}</div>
+            <div className="text-2xl font-bold">{stats?.totalJobs ?? 0}</div>
           </CardContent>
         </Card>
 
@@ -87,7 +110,7 @@ const Dashboard = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.activeJobPostings}</div>
+            <div className="text-2xl font-bold">{stats?.activeJobPostings ?? 0}</div>
           </CardContent>
         </Card>
 
@@ -97,9 +120,8 @@ const Dashboard = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalApplications}</div>
+            <div className="text-2xl font-bold">{stats?.totalApplications ?? 0}</div>
           </CardContent>
-         
         </Card>
       </div>
 
@@ -113,21 +135,31 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentJobs.map((job) => (
-                <div key={job._id} className="flex items-center justify-between border-b pb-2 cursor-pointer"  onClick={()=>navigate(`/admin/jobs//${job._id}`)}>
-                  <div>
-                    <p className="font-medium">{job.title}</p>
-                    <p className="text-sm text-muted-foreground">{job.date}</p>
+              {recentJobs.length > 0 ? (
+                recentJobs.map((job) => (
+                  <div
+                    key={job._id}
+                    className="flex items-center justify-between border-b pb-2 cursor-pointer"
+                    onClick={() => navigate(`/admin/jobs/${job._id}`)}
+                  >
+                    <div>
+                      <p className="font-medium">{job.title}</p>
+                      <p className="text-sm text-muted-foreground">{job.date}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      <span>{job.applications}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    <span>{job.applications}</span>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground">No recent jobs available</p>
+              )}
             </div>
           </CardContent>
-          <CardFooter className="cursor-pointer"  onClick={()=>navigate(`/admin/jobs`)}>See All Jobs</CardFooter>
+          <CardFooter className="cursor-pointer" onClick={() => navigate(`/admin/jobs`)}>
+            See All Jobs
+          </CardFooter>
         </Card>
 
         {/* Recent Blogs */}
@@ -138,22 +170,28 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentBlogs.map((blog) => (
-                <div key={blog._id} className="flex items-center justify-between border-b pb-2 cursor-pointer" onClick={()=>navigate(`/blog/${blog._id}`)}>
-                  <div>
-                    <p className="font-medium">{blog.title}</p>
-                    <p className="text-sm text-muted-foreground">{blog.date}</p>
+              {recentBlogs.length > 0 ? (
+                recentBlogs.map((blog) => (
+                  <div
+                    key={blog._id}
+                    className="flex items-center justify-between border-b pb-2 cursor-pointer"
+                    onClick={() => navigate(`/blog/${blog._id}`)}
+                  >
+                    <div>
+                      <p className="font-medium">{blog.title}</p>
+                      <p className="text-sm text-muted-foreground">{blog.date}</p>
+                    </div>
+                    <div className="text-sm text-muted-foreground">{blog.views} views</div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    {blog.views} views
-                  </div>
-                 
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground">No recent blogs available</p>
+              )}
             </div>
-            
           </CardContent>
-          <CardFooter className="cursor-pointer"  onClick={()=>navigate(`/blogs`)}>See All Blogs</CardFooter>
+          <CardFooter className="cursor-pointer" onClick={() => navigate(`/blogs`)}>
+            See All Blogs
+          </CardFooter>
         </Card>
       </div>
     </div>

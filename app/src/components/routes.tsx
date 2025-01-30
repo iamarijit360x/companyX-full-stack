@@ -21,6 +21,7 @@ import BlogList from "@/pages/Blogs/ListBlogs";
 import BlogView from "@/pages/Blogs/ViewBlog";
 import NotProtectedRoute from "./not-protected-route";
 import ContactUs from "@/pages/Contact";
+import Footer from "./footer";
 
 function RoutesComponent() {
   return (
@@ -53,6 +54,7 @@ function RoutesComponent() {
            
           </Routes>
         </div>
+        <Footer/>
       </BrowserRouter>
     </Providers>
   );

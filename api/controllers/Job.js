@@ -4,6 +4,7 @@ const Job = require('../models/Job'); // Assuming you have a Job model
 const createJob = async (req, res) => {
     try {
         const job = new Job({...req.body,requirements:JSON.stringify(req.body.requirements)});
+        console.log(job)
         await job.save();
         return res.status(201).json({ data: job });
     } catch (error) {

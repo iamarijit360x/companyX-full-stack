@@ -14,6 +14,7 @@ export const createJob =async (jobData) => {
                     description: jobData.description || null,
                     requirements: jobData.requirements || [],
                     type: jobData.type || null,
+                    department:jobData.department || null,
                 },
                 {
                     headers: {

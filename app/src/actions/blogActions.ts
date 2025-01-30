@@ -2,10 +2,10 @@ import { apiBlog } from '@/api/apiBlog';
 import axiosInstance from '@/middleware/axiosInterCenptor';
 import axios from 'axios';
 
-export const fetchBLogs = async (page,limit) => {
-     
+export const fetchBLogs = async (page,limit,search='') => {
+     console.log(search)
         try {
-            const response = await axios.get(`${apiBlog}?page=${page}&limit=${limit}`);
+            const response = await axios.get(`${apiBlog}?page=${page}&limit=${limit}&searchTerm=${search}`);
             return response.data;
         } catch (error) {
             console.log(error)

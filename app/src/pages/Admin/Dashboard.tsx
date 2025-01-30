@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Briefcase, FileText, TrendingUp } from 'lucide-react';
+import { Calendar, Users, Briefcase, FileText, TrendingUp, Plus } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { fetchRecentBlogs, fetchRecentJobs, fetchStats } from '@/actions/dashboardAction';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 // Define types
 interface Stats {
@@ -80,6 +81,29 @@ const Dashboard: React.FC = () => {
             <SelectItem value="thisYear">This Year</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Quick Actions Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="cursor-pointer" onClick={() => navigate('/admin/jobs/create')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Create Job</CardTitle>
+            <Plus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted-foreground">Post a new job opportunity</div>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer" onClick={() => navigate('/admin/create-blog')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Create Blog</CardTitle>
+            <Plus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted-foreground">Publish a new blog post</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Stats Grid */}

@@ -12,14 +12,30 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { createJob } from '@/actions/jobActions';
+
 const LOCATIONS = [
   'Remote', 'San Francisco, CA', 'New York, NY', 
   'Austin, TX', 'Chicago, IL', 'Seattle, WA', 'Boston, MA'
 ];
 
+const DEPARTMENTS = [
+  'Engineering',
+  'Product',
+  'Design',
+  'Marketing',
+  'Sales',
+  'Customer Success',
+  'Human Resources',
+  'Finance',
+  'Operations',
+  'Legal',
+  'Research & Development'
+];
+
 const AdminJobPostingPage = () => {
   const [jobPosting, setJobPosting] = useState({
     title: '',
+    department: '',
     location: '',
     description: '',
     requirements: '',
@@ -37,7 +53,7 @@ const AdminJobPostingPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!jobPosting.title || !jobPosting.location) {
+    if (!jobPosting.title || !jobPosting.location || !jobPosting.department) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -54,6 +70,7 @@ const AdminJobPostingPage = () => {
 
     setJobPosting({
       title: '',
+      department: '',
       location: '',
       description: '',
       requirements: '',
@@ -91,6 +108,27 @@ const AdminJobPostingPage = () => {
                   required
                 />
               </div>
+
+              <Select 
+                name="department"
+                value={jobPosting.department}
+                onValueChange={(value) => setJobPosting(prev => ({
+                  ...prev,
+                  department: value
+                }))}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DEPARTMENTS.map(dept => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
               <Select 
                 name="location"
@@ -131,8 +169,6 @@ const AdminJobPostingPage = () => {
                   <SelectItem value="Remote">InternShip</SelectItem>
                 </SelectContent>
               </Select>
-
-             
 
               <div className="md:col-span-2">
                 <Textarea

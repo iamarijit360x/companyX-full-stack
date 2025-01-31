@@ -6,17 +6,20 @@ import {
     TableCell,
     TableHead,
     TableHeader,
-    TableRow
+    TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
     ArrowUpDown,
+    Plus,
     Edit,
-    Trash2
+    Trash2,
+    Search
 } from 'lucide-react';
 import { fetchJobs } from '@/actions/jobActions';
 import { convertISOToDate } from '@/lib/utils';
+import { stat } from 'fs';
 
 const AdminJobsList = () => {
     const [jobs, setJobs] = useState([]);
@@ -27,13 +30,13 @@ const AdminJobsList = () => {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState(10); // Default limit
+    const [limit, setLimit] = useState(10);
     const navigate = useNavigate();
-
+    const [status, setStatus] = useState('Active')
     useEffect(() => {
         const loadJobs = async () => {
             try {
-                const response = await fetchJobs(currentPage, limit);
+                const response = await fetchJobs(currentPage, limit,status);
                 const data = response.data.jobs.map(job => ({
                     id: job._id,
                     title: job.title,
@@ -42,14 +45,14 @@ const AdminJobsList = () => {
                     status: job.type
                 }));
                 setJobs(data);
-                setTotalPages(response.data.totalPages); // Assuming the API returns totalPages
+                setTotalPages(response.data.totalPages);
             } catch (error) {
                 console.error('Error fetching jobs:', error);
             }
         };
 
         loadJobs();
-    }, [currentPage, limit]);
+    }, [currentPage, limit,status]);
 
     const sortedJobs = useMemo(() => {
         let sortableJobs = [...jobs];
@@ -95,128 +98,153 @@ const AdminJobsList = () => {
         navigate(`/admin/jobs/${jobId}`);
     };
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
-
-    const handleLimitChange = (newLimit) => {
-        setLimit(newLimit);
-        setCurrentPage(1); // Reset to the first page when changing the limit
-    };
-
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Job Listings</h1>
-
-            <div className="mb-4 flex items-center space-x-2">
-                <Input
-                    placeholder="Search jobs..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full max-w-md"
-                />
-            </div>
-            <div className="mt-4 flex justify-end">
-                <Button onClick={() => navigate('/admin/create-job')}>
-                    Create Job
+        <div className="w-full max-w-[95%] mx-auto p-8 h-screen">
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-light tracking-tight">Job Listings</h1>
+                <Button
+                    onClick={() => navigate('/admin/create-job')}
+                    className="hover:bg-accent transition-colors"
+                    variant="outline"
+                >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Post A Job
                 </Button>
             </div>
+            <div className="flex items-center space-x-2 mb-8">
+                <span className="text-sm text-muted-foreground">Filter by Status:</span>
+                <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="border border-input bg-background rounded p-1 text-sm"
+                >
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                </select>
+            </div>
 
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead
-                            onClick={() => handleSort('title')}
-                            className="cursor-pointer hover:bg-gray-100"
-                        >
-                            <div className="flex items-center">
-                                Job Title
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </div>
-                        </TableHead>
-                        <TableHead
-                            onClick={() => handleSort('location')}
-                            className="cursor-pointer hover:bg-gray-100"
-                        >
-                            <div className="flex items-center">
-                                Location
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </div>
-                        </TableHead>
-                        <TableHead
-                            onClick={() => handleSort('createdAt')}
-                            className="cursor-pointer hover:bg-gray-100"
-                        >
-                            <div className="flex items-center">
-                                Post Date
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </div>
-                        </TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {filteredJobs.map((job) => (
-                        <TableRow key={job.id} onClick={() => handleRowClick(job.id)} className="cursor-pointer">
-                            <TableCell>{job.title}</TableCell>
-                            <TableCell>{job.location}</TableCell>
-                            <TableCell>{convertISOToDate(job.postDate)}</TableCell>
-                            <TableCell>{job.status}</TableCell>
-                            <TableCell>
-                                <div className="flex space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={(e) => { e.stopPropagation(); handleEdit(job.id); }}
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        size="icon"
-                                        onClick={(e) => { e.stopPropagation(); handleDelete(job.id); }}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+            <div className="relative mb-8">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                    placeholder="Search by job title or location..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 py-6 border-border focus:border-ring rounded-md text-base w-full"
+                />
+            </div>
+
+            <div className="border border-border rounded-lg shadow-sm overflow-hidden">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="hover:bg-muted/50">
+                            <TableHead
+                                onClick={() => handleSort('title')}
+                                className="cursor-pointer hover:bg-muted transition-colors font-medium"
+                            >
+                                <div className="flex items-center">
+                                    Job Title
+                                    <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
                                 </div>
-                            </TableCell>
+                            </TableHead>
+                            <TableHead
+                                onClick={() => handleSort('location')}
+                                className="cursor-pointer hover:bg-muted transition-colors font-medium"
+                            >
+                                <div className="flex items-center">
+                                    Location
+                                    <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                                </div>
+                            </TableHead>
+                            <TableHead
+                                onClick={() => handleSort('createdAt')}
+                                className="cursor-pointer hover:bg-muted transition-colors font-medium"
+                            >
+                                <div className="flex items-center">
+                                    Post Date
+                                    <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                                </div>
+                            </TableHead>
+                            <TableHead className="font-medium">Status</TableHead>
+                            <TableHead className="font-medium">Actions</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredJobs.map((job) => (
+                            <TableRow
+                                key={job.id}
+                                onClick={() => handleRowClick(job.id)}
+                                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                            >
+                                <TableCell className="font-medium">{job.title}</TableCell>
+                                <TableCell>{job.location}</TableCell>
+                                <TableCell className="text-muted-foreground">{convertISOToDate(job.postDate)}</TableCell>
+                                <TableCell>
+                                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-secondary text-secondary-foreground">
+                                        {job.status}
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex space-x-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => { e.stopPropagation(); handleEdit(job.id); }}
+                                            className="hover:bg-muted text-foreground"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => { e.stopPropagation(); handleDelete(job.id); }}
+                                            className="hover:bg-destructive/90 hover:text-destructive-foreground text-destructive"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
 
-            {filteredJobs.length === 0 && (
-                <div className="text-center text-gray-500 mt-4">
-                    No jobs found
-                </div>
-            )}
+                {filteredJobs.length === 0 && (
+                    <div className="text-center py-12 text-muted-foreground">
+                        No jobs found
+                    </div>
+                )}
+            </div>
 
-            {/* Pagination Controls */}
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex justify-between items-center mt-6">
                 <div className="flex items-center space-x-2">
-                    <span>Rows per page:</span>
+                    <span className="text-sm text-muted-foreground">Rows per page:</span>
                     <select
                         value={limit}
-                        onChange={(e) => handleLimitChange(Number(e.target.value))}
-                        className="border rounded p-1"
+                        onChange={(e) => setLimit(Number(e.target.value))}
+                        className="border border-input bg-background rounded p-1 text-sm"
                     >
                         <option value={10}>10</option>
                         <option value={20}>20</option>
                         <option value={50}>50</option>
                     </select>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-4">
                     <Button
-                        onClick={() => handlePageChange(currentPage - 1)}
+                        onClick={() => setCurrentPage(prev => prev - 1)}
                         disabled={currentPage === 1}
+                        variant="outline"
+                        className="hover:bg-muted"
                     >
                         Previous
                     </Button>
-                    <span>Page {currentPage} of {totalPages}</span>
+                    <span className="text-sm text-muted-foreground">
+                        Page {currentPage} of {totalPages}
+                    </span>
                     <Button
-                        onClick={() => handlePageChange(currentPage + 1)}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
                         disabled={currentPage === totalPages}
+                        variant="outline"
+                        className="hover:bg-muted"
                     >
                         Next
                     </Button>

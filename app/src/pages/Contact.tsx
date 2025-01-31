@@ -1,39 +1,69 @@
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Building2, Mail, Phone, Clock } from "lucide-react";
+import { Label } from '@/components/ui/lable';
 
 const ContactUs = () => {
   return (
-    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold">Contact Us</h1>
-          <p className="mt-4 text-lg">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             We'd love to hear from you! Reach out to us for any questions, feedback, or inquiries.
           </p>
         </div>
 
         {/* Contact Information and Form */}
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Information */}
-          <div className=" p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold">Our Office</h2>
-            <div className="mt-4 space-y-4 ">
-              <p>
-                <span className="font-semibold">Address:</span> 123 CompanyX Street, Tech City, TX 12345
-              </p>
-              <p>
-                <span className="font-semibold">Phone:</span> +1 (123) 456-7890
-              </p>
-              <p>
-                <span className="font-semibold">Email:</span> info@companyx.com
-              </p>
-              <p>
-                <span className="font-semibold">Business Hours:</span> Mon - Fri, 9:00 AM - 5:00 PM
-              </p>
-            </div>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Our Office</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <Building2 className="w-5 h-5 text-muted-foreground mt-1" />
+                    <div>
+                      <p className="font-medium">Address</p>
+                      <p className="text-muted-foreground">123 CompanyX Street, Tech City, TX 12345</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <Phone className="w-5 h-5 text-muted-foreground mt-1" />
+                    <div>
+                      <p className="font-medium">Phone</p>
+                      <p className="text-muted-foreground">+1 (123) 456-7890</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <Mail className="w-5 h-5 text-muted-foreground mt-1" />
+                    <div>
+                      <p className="font-medium">Email</p>
+                      <p className="text-muted-foreground">info@companyx.com</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <Clock className="w-5 h-5 text-muted-foreground mt-1" />
+                    <div>
+                      <p className="font-medium">Business Hours</p>
+                      <p className="text-muted-foreground">Mon - Fri, 9:00 AM - 5:00 PM</p>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Map */}
-            <div className="mt-6">
-              <iframe
+                {/* Map */}
+                <div className="rounded-lg overflow-hidden border border-border">
+                <iframe
                 title="CompanyX Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.8354345093747!2d144.95373531531615!3d-37.816279742021665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf577d2a4b11e42e1!2sMelbourne%20VIC%2C%20Australia!5e0!3m2!1sen!2sus!4v1633023222539!5m2!1sen!2sus"
                 width="100%"
@@ -42,75 +72,67 @@ const ContactUs = () => {
                 allowFullScreen={false}
                 loading="lazy"
               ></iframe>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Contact Form */}
-          <div className=" p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold">Send Us a Message</h2>
-            <form className="mt-6 space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Send Us a Message</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Your name"
+                  />
+                </div>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="your.email@example.com"
+                  />
+                </div>
 
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  required
-                  className="mt-1 block w-full px-3 py-2 borderrounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Subject</Label>
+                  <Input
+                    id="subject"
+                    name="subject"
+                    required
+                    placeholder="What is this regarding?"
+                  />
+                </div>
 
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  required
-                  className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                ></textarea>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    rows={4}
+                    required
+                    placeholder="Your message here..."
+                    className="resize-none"
+                  />
+                </div>
 
-              <div>
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 bg-blue-600 font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
+                <Button type="submit" className="w-full">
                   Send Message
-                </button>
-              </div>
-            </form>
-          </div>
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

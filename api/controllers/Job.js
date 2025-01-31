@@ -17,9 +17,10 @@ const createJob = async (req, res) => {
 const listJobs = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const status=req.query.status||'active'
 
     try {
-        const jobs = await Job.find({status:'Active'})
+        const jobs = await Job.find({status})
             .skip((page - 1) * limit)
             .limit(limit);
         const totalJobs = await Job.countDocuments({});

@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
-const bookingConfirmationEmail = require('../template/bookingConfirmation');
-const eventCancellationEmail = require('../template/eventCancel');
+const selectiomEmailTemplate = require('../template/selcetionemail');
+const rejectionEmail = require('../template/rejectionEmail');
 
 dotenv.config();
 
@@ -33,19 +33,18 @@ class EmailService {
             throw new Error('Email sending failed');
         }
     }
-    async sendEventCancellation(bookings) {
-        for (const booking of bookings) {
-            const htmlContent = eventCancellationEmail(booking);
-            console.log(booking.userId.email,booking);
+    async sendRejectionEmail(applicationsToBeRejected) {
+        for (const application of applicationsToBeRejected) {
+            const htmlContent = rejectionEmail({name:application.firstname,appliedRole:role});
             
-            await this.sendEmail(booking.userId.email, 'Event Cancelled', htmlContent);
+            await this.sendEmail(application.email, 'Application Updates', htmlContent);
             await new Promise((resolve) => setTimeout(resolve, 2000)); 
         }
     }
 
-    async sendBookingConfirmation(bookingDetails) {
-        const htmlContent = bookingConfirmationEmail(bookingDetails);
-        this.sendEmail(bookingDetails.userId.email, 'Booking Confirmed', htmlContent);
+    async sendSelectionEmail(name,appliedRole,email) {
+        const htmlContent = selectiomEmailTemplate({name,appliedRole})
+        this.sendEmail(email, 'Application Updates', htmlContent);
     }
 }
 

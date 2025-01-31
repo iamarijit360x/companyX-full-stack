@@ -1,6 +1,8 @@
 const { Mongoose, default: mongoose } = require("mongoose");
 const JobApplication  = require("../models/JobApplication");
 const Job  = require("../models/Job");
+const emailService = require("../services/emailService");
+const utilsService = require("../services/utilsService");
 
 const applyForJob = async (req, res) => {
     try {
@@ -32,17 +34,18 @@ const changeApplicationStatus = async (req, res) => {
 const selectCandidate = async (req, res) => {
     const { id } = req.params;
     try {
-        const application = await JobApplication.findById(id);
+        const application = await JobApplication.findById(id).populate('jobId');
         if (!application) {
             return res.status(404).send({ error: "Job application not found" });
         }
         console.log(application)
         application.status = "Selected";
-        // TODO SEND MAIL
+        await emailService.sendSelectionEmail(application.name,application.jobId.title,application.email)
         await application.save();
         res.send(application);
     } catch (error) {
         res.status(400).send(error);
+        console.log(error)
     }
 };
 
@@ -52,11 +55,30 @@ const rejectAllInProgress = async (req, res) => {
         return res.status(400).send({ error: "Job ID is required" });
     }
     try {
+        // Fetch all "In Progress" applications for the given jobId
+        const applications = await JobApplication.find({
+            status: "In Progress",
+            jobId: new mongoose.Types.ObjectId(jobId),
+        });
+
+        // Extract CV file paths/URLs from the applications
+        const cvs = applications.map(application => application.cv);
+
+        // Pass the CVs to the deletePdf function
+        if (cvs.length > 0) {
+            utilsService.deletePdf(cvs);  // Assuming deletePdf can handle an array of CV paths
+        }
+
+        // Update the status of applications and job
         const result = await JobApplication.updateMany(
             { status: "In Progress", jobId: new mongoose.Types.ObjectId(jobId) },
             { $set: { status: "Rejected" } }
         );
-        const job =await Job.findByIdAndUpdate(jobId,{status:'Expired'})
+        console.log(result);
+
+        // Update the status of the job
+        const job = await Job.findByIdAndUpdate(jobId, { status: 'Expired' });
+
         res.send({ message: `${result.nModified} applications rejected` });
     } catch (error) {
         res.status(400).send(error);

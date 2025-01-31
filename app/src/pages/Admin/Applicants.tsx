@@ -94,7 +94,7 @@ const JobApplicantsList = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="p-4"
+            className="p-4 h-screen"
         >
             <h2 className="text-2xl font-bold mb-4">Job Applicants</h2>
 

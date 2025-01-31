@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint .",
     "dev": "npx nodemon app.js",
-    "start": "node app.js",
+    "start": "node app",
     "vercel-build": "echo hello"
   },
   "keywords": [],

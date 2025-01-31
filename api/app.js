@@ -18,7 +18,9 @@ const port = process.env.PORT || 5000;
 // Connect to MongoDB
 connection(); // Connect only if not in test mode
 
-
+app.get('/',(req,res)=>{
+    res.send("welcome to company-x-api")
+})
 // Use cors middleware
 app.use(express.json());
 app.use(bodyParser.json());

@@ -6,19 +6,19 @@ const utilsService = require("../services/utilsService");
 
 const applyForJob = async (req, res) => {
     try {
-        const isjobApplication=JobApplication.findOne({jobId:req.body.jobId,email:req.body.email})
+        const isjobApplication=await JobApplication.findOne({jobId:req.body.jobId,email:req.body.email})
         if(isjobApplication)
         {
             await utilsService.deletePdf(req.body.cv);
-            res.status(409).json({message:'You Have Already Applied For The Job'});
+           return res.status(409).json({message:'You Have Already Applied For The Job'});
 
         }
         const jobApplication = new JobApplication(req.body);
         await jobApplication.save();
-    res.status(201).send(jobApplication);
+        return res.status(201).send(jobApplication);
     } catch (error) {
         console.log(error)
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 };
 
@@ -34,7 +34,7 @@ const changeApplicationStatus = async (req, res) => {
         await application.save();
         res.send(application);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 };
 const selectCandidate = async (req, res) => {

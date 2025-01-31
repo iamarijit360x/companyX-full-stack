@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2 } from 'lucide-react';
-
 import { 
   Select, 
   SelectContent, 
@@ -43,12 +42,29 @@ const JOB_TYPES = [
   { label: 'Internship', value: 'Internship' }
 ];
 
+interface JobPosting {
+  title: string;
+  department: string;
+  location: string;
+  description: string;
+  requirements: string;
+  type: string;
+}
+
+interface JobPostingErrors {
+  title?: string;
+  department?: string;
+  location?: string;
+  description?: string;
+  requirements?: string;
+}
+
 const AdminJobPostingPage = () => {
-  const navigate=useNavigate()
-  const {toast}=useToast();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [jobPosting, setJobPosting] = useState({
+  const [errors, setErrors] = useState<JobPostingErrors>({});
+  const [jobPosting, setJobPosting] = useState<JobPosting>({
     title: '',
     department: '',
     location: '',
@@ -58,24 +74,19 @@ const AdminJobPostingPage = () => {
   });
 
   const validateForm = () => {
-    const newErrors = {};
-    
+    const newErrors: JobPostingErrors = {};
     if (!jobPosting.title.trim()) {
       newErrors.title = 'Job title is required';
     }
-    
     if (!jobPosting.department) {
       newErrors.department = 'Department is required';
     }
-    
     if (!jobPosting.location) {
       newErrors.location = 'Location is required';
     }
-    
     if (!jobPosting.description.trim()) {
       newErrors.description = 'Job description is required';
     }
-    
     if (!jobPosting.requirements.trim()) {
       newErrors.requirements = 'At least one requirement is needed';
     }
@@ -84,14 +95,13 @@ const AdminJobPostingPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setJobPosting(prev => ({
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
+    if (errors[name as keyof JobPostingErrors]) {
       setErrors(prev => ({
         ...prev,
         [name]: undefined
@@ -99,15 +109,14 @@ const AdminJobPostingPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
       toast({
         title: 'Error',
         description: 'Please fill in all required fields!',
-    });
-      toast.error('');
+      });
       return;
     }
 
@@ -125,7 +134,7 @@ const AdminJobPostingPage = () => {
       toast({
         title: 'Job Created Successfully',
         description: 'Job posting created successfully!',
-    });
+      });
       
       setJobPosting({
         title: '',
@@ -135,7 +144,7 @@ const AdminJobPostingPage = () => {
         requirements: '',
         type: 'Full-time'
       });
-      navigate('/admin/jobs')
+      navigate('/admin/jobs');
     } catch (error) {
       console.error('Error creating job:', error);
     } finally {

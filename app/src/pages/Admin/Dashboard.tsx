@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { fetchRecentBlogs, fetchRecentJobs, fetchStats } from '@/actions/dashboardAction';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 
 // Define types
 interface Stats {
@@ -25,6 +24,7 @@ interface Stats {
   totalJobs: number;
   activeJobPostings: number;
   totalApplications: number;
+  enquiries:number
 }
 
 interface Job {
@@ -104,6 +104,16 @@ const Dashboard: React.FC = () => {
             <div className="text-sm text-muted-foreground">Publish a new blog post</div>
           </CardContent>
         </Card>
+
+        <Card className="cursor-pointer" onClick={() => navigate('/admin/enquiry')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Enquiry</CardTitle>
+            <Plus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted-foreground">View enquiries</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Stats Grid */}
@@ -118,15 +128,7 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalJobs ?? 0}</div>
-          </CardContent>
-        </Card>
+        
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -135,6 +137,16 @@ const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.activeJobPostings ?? 0}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Enquries</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.enquiries ?? 0}</div>
           </CardContent>
         </Card>
 

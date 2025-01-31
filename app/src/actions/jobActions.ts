@@ -1,5 +1,6 @@
 import { apiJobPosting } from '@/api/jobAPI';
 import axiosInstance from '@/middleware/axiosInterCenptor';
+import axios from 'axios';
 
 
 
@@ -36,6 +37,16 @@ export const createJob =async (jobData) => {
 export const fetchJobs = async (page,limit,status) => {
         try {
             const response = await axiosInstance.get(`${apiJobPosting}?page=${page}&limit=${limit}&status=${status||'Active'}`);
+            
+            return response.data;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    export const fetchJobById = async (id) => {
+        try {
+            const response = await axios.get(`${apiJobPosting}/${id}`);
             
             return response.data;
         } catch (error) {

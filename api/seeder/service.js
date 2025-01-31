@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
-mongoose.connect('mongodb://127.0.0.1:27017/compnay-x')
+mongoose.connect('mongodb+srv://iamarijitx:bMdR8HXC63Y4ndP@gymdatabase.zmv99gz.mongodb.net/?retryWrites=true&w=majority&appName=GymDataBase/compnay-x')
 
  async function createUser(name, email, password, isAdmin = false) {
    

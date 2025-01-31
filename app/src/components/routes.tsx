@@ -22,6 +22,8 @@ import BlogView from "@/pages/Blogs/ViewBlog";
 import NotProtectedRoute from "./not-protected-route";
 import ContactUs from "@/pages/Contact";
 import Footer from "./footer";
+import JobApplicationView from "@/pages/Admin/JobAplication";
+import EnquiryView from "@/pages/Admin/Enquiry";
 
 function RoutesComponent() {
   return (
@@ -34,9 +36,11 @@ function RoutesComponent() {
               <Route path='/admin/create-job' element={<AdminJobPostingPage/>}/>
               <Route path='/admin/jobs' element={<AdminJobsList/>}/>
               <Route path='/admin/jobs/:jobId' element={<JobApplicantsList/>}/>
+              <Route path='/admin/jobs/application/:applicationId' element={<JobApplicationView/>}/>
               <Route path='/admin/create-blog' element={<CreateBlog/>}/>
               <Route path='/admin/' element={<Dashboard/>}/>
               <Route path='/admin/blog/edit/:id' element={<EditBlog/>}/>
+              <Route path='/admin/enquiry' element={<EnquiryView/>}/>
             </Route>
             <Route  element={<NotProtectedRoute />} >
                 <Route path="/admin/login" element={<AdminLogin />} />

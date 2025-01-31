@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Table,
@@ -21,15 +21,22 @@ import { listApplicants, rejectAllCandidates } from '@/actions/jobApplication';
 import { downloadPdf } from '@/actions/fileAction';
 import { convertISOToDate } from '@/lib/utils';
 import { selectCandidate } from '@/actions/jobApplication'; // Import the function
+import ConfirmModal from '@/components/dialogBox';
+import { useToast } from '@/hooks/use-toast';
+import { fetchJobById } from '@/actions/jobActions';
 
 const JobApplicantsList = () => {
     const { jobId } = useParams();
+
+    const {toast}=useToast()
     const [applicants, setApplicants] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(0)
+    const [job,setJob]=useState(null)
+    const navigate=useNavigate()
     const fetchApplicants = async () => {
         try {
             const response = await listApplicants(jobId, page, limit);
@@ -39,6 +46,14 @@ const JobApplicantsList = () => {
             console.error('Error fetching applicants:', error);
         }
     };
+    useEffect(()=>{
+    if(jobId)
+        fetchJobById(jobId)
+        .then((data)=>setJob(data))
+    },[jobId])
+    useEffect(() => {
+        fetchApplicants();
+    }, [jobId, page, limit]);
     useEffect(() => {
         fetchApplicants();
     }, [jobId, page, limit]);
@@ -53,15 +68,15 @@ const JobApplicantsList = () => {
         );
     }, [applicants, searchTerm, statusFilter]);
 
-    const handleViewDetails = (applicantId) => {
-        // Implement view details logic
-        console.log(`View details for applicant ${applicantId}`);
+    const handleViewDetails = (applicant) => {
+        navigate(`/admin/jobs/application/${applicant._id}`)
+        console.log(`View details for applicant ${applicant}`);
     };
 
-    const handleDownloadResume = (applicantId) => {
+    const handleDownloadResume = (applicant) => {
         // Implement resume download logic
-        console.dir(applicantId);
-        downloadPdf(applicantId.cv);
+        console.dir(applicant);
+        downloadPdf(applicant.cv);
     };
 
     const handleSelectCandidate = async (applicantId) => {
@@ -69,23 +84,29 @@ const JobApplicantsList = () => {
             await selectCandidate(applicantId);
             fetchApplicants();
             console.log(`Selected candidate ${applicantId}`);
+            toast({
+                title: 'Candidate Selected',
+            });
         } catch (error) {
             console.error('Error selecting candidate:', error);
         }
     };
 
     const handlerejectAllCandidates = async () => {
-        if (window.confirm('Are you sure you want to reject all candidates?')) {
             try {
                 // Implement reject all candidates logic
                 await rejectAllCandidates(jobId)
-                console.log('All candidates rejected');
+                toast({
+                    title: 'Rejected Successful',
+                    description: 'All inPrgress candidates rejected',
+                });
+                console.log('');
                 // Refresh the applicants list
                 fetchApplicants();
             } catch (error) {
                 console.error('Error rejecting all candidates:', error);
             }
-        }
+        
     };
     const MotionTableRow = motion(TableRow);
 
@@ -104,17 +125,14 @@ const JobApplicantsList = () => {
                         placeholder="Search applicants..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 w-80"
                     />
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                    <Search className="absolute left-3 top-3 h-4  text-gray-500" />
                 </div>
 
-                <Button variant="outline">
-                    <Filter className="mr-2 h-4 w-4" /> Filter
-                </Button>
-                <Button variant="outline" onClick={handlerejectAllCandidates}>
-                    Reject All
-                </Button>
+               
+                {job?.status==='Active' && <ConfirmModal buttonText={"Reject All"} action={handlerejectAllCandidates} alertDescription='  This action will reject all candidates. This cannot be undone.'/>}
+
             </div>
 
             <Table>
@@ -144,12 +162,7 @@ const JobApplicantsList = () => {
                                 <TableCell>{convertISOToDate(applicant.appliedAt)}</TableCell>
                                 <TableCell>
                                     <span
-                                        className={`
-            px-2 py-1 rounded-full text-xs
-            ${applicant.status === 'Interview Scheduled' ? 'bg-blue-100 text-blue-800' :
-                                                applicant.status === 'Under Review' ? 'bg-yellow-100 text-yellow-800' :
-                                                    'bg-green-100 text-green-800'}
-          `}
+                                        className={`px-2 py-1 rounded-full text-xs ${applicant.status === 'In Progress' ? 'text-yellow-100' :applicant.status === 'Rejected' ? 'bg-red-100 text-yellow-800' :applicant.status==='Selected'?'bg-green-100 text-green-800':''}`}
                                     >
                                         {applicant.status}
                                     </span>
@@ -163,9 +176,8 @@ const JobApplicantsList = () => {
                                             <Download className="h-4 w-4" />
                                         </Button>
                                         {applicant.status === 'In Progress' && (
-                                            <Button variant="outline" size="icon" onClick={() => handleSelectCandidate(applicant._id)}>
-                                                Select
-                                            </Button>
+                                             <ConfirmModal buttonText={'Select'} action={() => handleSelectCandidate(applicant._id)} alertDescription='  This action will Select this candidate. '/>
+                                           
                                         )}
                                     </div>
                                 </TableCell>

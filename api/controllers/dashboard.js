@@ -1,6 +1,7 @@
 const Job = require('../models/Job')
 const { Blog } = require('../models/Blogs');
 const JobApplication = require('../models/JobApplication')
+const Enquiry = require('../models/Enquiry')
 
 const getRecentJobs = async (req, res) => {
     try {
@@ -28,13 +29,15 @@ const getStatus = async (req, res) => {
     try {
         const { dateRange } = req.query;
         const filter = getDateRangeFilter(dateRange);
-        const [totalBlogs, totalJobs, activeJobPostings, totalApplications] = await Promise.all([
+        const [totalBlogs, totalJobs, activeJobPostings, totalApplications,enquiries] = await Promise.all([
             Blog.countDocuments({ ...filter }),
             Job.countDocuments({ ...filter }),
             Job.countDocuments({ ...filter, status: 'Active' }),
             JobApplication.countDocuments({ ...filter }),
+            Enquiry.countDocuments({ ...filter })
+            
         ]);
-        res.json({ totalBlogs, totalJobs, activeJobPostings, totalApplications });
+        res.json({ totalBlogs, totalJobs, activeJobPostings, totalApplications,enquiries });
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Error fetching blogs', error });

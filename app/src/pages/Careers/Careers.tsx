@@ -33,7 +33,7 @@ const CareerPage = () => {
     const loadJobs = async () => {
       setLoading(true);
       try {
-        const response = await fetchJobs(page, JOBS_PER_PAGE);
+        const response = await fetchJobs(page, JOBS_PER_PAGE,'Active');
         setJobs(response.data.jobs);
         setFilteredJobs(response.data.jobs);
         setTotalPages(response.data.totalPages);

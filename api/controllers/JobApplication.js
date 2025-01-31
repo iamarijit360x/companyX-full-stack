@@ -6,10 +6,16 @@ const utilsService = require("../services/utilsService");
 
 const applyForJob = async (req, res) => {
     try {
-        console.log(req.body)
+        const isjobApplication=JobApplication.findOne({jobId:req.body.jobId,email:req.body.email})
+        if(isjobApplication)
+        {
+            await utilsService.deletePdf(req.body.cv);
+            res.status(409).json({message:'You Have Already Applied For The Job'});
+
+        }
         const jobApplication = new JobApplication(req.body);
         await jobApplication.save();
-        res.status(201).send(jobApplication);
+    res.status(201).send(jobApplication);
     } catch (error) {
         console.log(error)
         res.status(400).send(error);
@@ -93,19 +99,48 @@ const rejectAllInProgress = async (req, res) => {
         res.status(400).send(error);
     }
 };
+const rejectSingleCandidate = async (req, res) => {
+    const { applicationId } = req.params;
+    try {
+        // Fetch all "In Progress" applications for the given jobId
+        const application= await JobApplication.findById(applicationId).populate('jobId');
+        try {
+            await utilsService.deletePdf(application.cv);
+        } catch (error) {
+            console.error('Failed to delete one or more CVs:', error);
+            // Handle the error
+        }
+        try {
+           await emailService.sendRejectionEmail([application])
+        } catch (error) {
+            console.error('Failed to send Email', error);
+            // Handle the error
+        }
+        // Update the status of applications and job
+        application.status='Rejected';
+        await application.save()
+
+        // Update the status of the job
+
+        res.send({ message: `application rejected` });
+    } catch (error) {
+        console.log(error)
+        res.status(400).send(error);
+    }
+};
 
 const viewAppliedApplications = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
-    const {id}=req.params;
+    const {jobId}=req.params;
     try {
 
         // Use new keyword to create ObjectId
-        const applications = await JobApplication.find({ jobId: new mongoose.Types.ObjectId(id) })
+        const applications = await JobApplication.find({ jobId: new mongoose.Types.ObjectId(jobId) })
             .limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
         
-        const count = await JobApplication.countDocuments({ jobId: new mongoose.Types.ObjectId(id) });
+        const count = await JobApplication.countDocuments({ jobId: new mongoose.Types.ObjectId(jobId) });
         
         res.send({
             applications,
@@ -117,10 +152,26 @@ const viewAppliedApplications = async (req, res) => {
         res.status(500).send(error);
     }
 };
+const fetchApplicationById = async (req, res) => {
+    const {id}=req.params;
+    try {
+
+        const applications = await JobApplication.findById(id)
+        
+        res.send(
+            applications
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
 module.exports = {
     applyForJob,
     changeApplicationStatus,
     viewAppliedApplications,
     selectCandidate,
-    rejectAllInProgress
+    fetchApplicationById,
+    rejectAllInProgress,
+    rejectSingleCandidate
 };

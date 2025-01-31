@@ -36,7 +36,7 @@ const jobApplicationSchema = new mongoose.Schema({
         default:'In Progress',
         enum:['In Progress','Rejected','Selected']
     }
-});
+},{timestamps:true});
 
 const JobApplication = mongoose.model('JobApplication', jobApplicationSchema);
 

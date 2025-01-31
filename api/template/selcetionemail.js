@@ -151,11 +151,11 @@ const selectiomEmailTemplate = (applicantData) => {
                     <li>Feel free to reach out to us at comapnx@exmaple.com if you have any questions.</li>
                 </ul>
             </div>
-            <p>We look forward to having you on board and contributing to the success of [Your Company].</p>
+            <p>We look forward to having you on board and contributing to the success of CompanyX.</p>
         </div>
         <div class="footer">
             <p>Best regards,</p>
-            <p class="company-name">[Your Company Name]</p>
+            <p class="company-name">CompanyX</p>
             <div class="button-group">
                 <a href="[Your Website URL]" class="button">Visit our website</a>
                 <a href="[Careers Page URL]" class="button">View onboarding resources</a>

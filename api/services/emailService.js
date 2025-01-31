@@ -35,7 +35,8 @@ class EmailService {
     }
     async sendRejectionEmail(applicationsToBeRejected) {
         for (const application of applicationsToBeRejected) {
-            const htmlContent = rejectionEmail({name:application.firstname,appliedRole:role});
+            console.log("APPLICATION",application)
+            const htmlContent = rejectionEmail({name:application.name,appliedRole:application.jobId.title});
             
             await this.sendEmail(application.email, 'Application Updates', htmlContent);
             await new Promise((resolve) => setTimeout(resolve, 2000)); 

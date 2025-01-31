@@ -59,13 +59,12 @@ const rejectAllInProgress = async (req, res) => {
         const applications = await JobApplication.find({
             status: "In Progress",
             jobId: new mongoose.Types.ObjectId(jobId),
-        }).populate(jobId);
+        }).populate('jobId');
 
         // Extract CV file paths/URLs from the applications
         const cvs = applications.map(application => application.cv);
         
-
-        // Pass the CVs to the deletePdf function
+        console.log("CVS",cvs)
         try {
             await Promise.all(cvs.map(cv => utilsService.deletePdf(cv)));
         } catch (error) {
@@ -90,6 +89,7 @@ const rejectAllInProgress = async (req, res) => {
 
         res.send({ message: `${result.nModified} applications rejected` });
     } catch (error) {
+        console.log(error)
         res.status(400).send(error);
     }
 };

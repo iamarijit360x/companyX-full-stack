@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Calendar, User, Loader2, Trash2, Pencil } from "lucide-react";
 import { deleteBlog, viewBlog } from "@/actions/blogActions";
-import { cn } from "@/lib/utils"; // If using utility helpers
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import ConfirmModal from "@/components/dialogBox";
 
 interface Blog {
   id: string;
@@ -38,46 +46,58 @@ const BlogView = () => {
     fetchBlog();
   }, [id]);
 
+  const handleDelete = async () => {
+   
+      try {
+        await deleteBlog(id);
+        navigate("/blogs");
+      } catch (err) {
+        setError("Failed to delete blog post");
+      }
+    
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin text-gray-600" />
+      <div className="flex justify-center items-center min-h-[80vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   if (error || !blog) {
     return (
-      <div className="flex justify-center items-center min-h-screen px-4">
-        <Card className="max-w-md w-full text-center shadow-lg">
-          <CardContent className="py-8">
-            <p className="text-red-500 font-medium">{error || "Blog post not found"}</p>
-            <Button onClick={() => navigate("/blogs")} variant="outline" className="mt-4">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blogs
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="container max-w-6xl mx-auto p-4">
+        <Alert variant="destructive">
+          <AlertDescription>
+            {error || "Blog post not found"}
+          </AlertDescription>
+        </Alert>
+        <Button onClick={() => navigate("/blogs")} variant="outline" className="mt-4">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Blogs
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-12  md:px-12 lg:px-24 max-w-100 mx-auto">
-      <Card className=" w-100 shadow-md border rounded-xl">
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle className="text-3xl font-bold leading-tight">{blog.title}</CardTitle>
-              <CardDescription className="mt-2 text-gray-500">
-                <div className="flex items-center space-x-4 text-sm">
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 mr-1 text-gray-500" />
+    <div className="container max-w-6xl mx-auto p-4">
+      <Card className="border-none shadow-none">
+        <CardHeader className="space-y-4">
+          <div className="flex justify-between items-start flex-wrap gap-4">
+            <div className="space-y-2">
+              <CardTitle className="text-4xl font-bold tracking-tight">
+                {blog.title}
+              </CardTitle>
+              <CardDescription>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-1">
+                    <User className="h-4 w-4" />
                     <span>{blog.author}</span>
                   </div>
-                  <Separator orientation="vertical" className="h-4" />
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1 text-gray-500" />
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
                     <span>
                       {new Date(blog.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -95,43 +115,30 @@ const BlogView = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate(`/admin/blog/edit/${id}`)}
-                className="flex items-center gap-2"
               >
-                <Pencil className="h-4 w-4" /> Edit
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit
               </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={async () => {
-                  if (window.confirm("Are you sure you want to delete this blog post?")) {
-                    try {
-                      await deleteBlog(id);
-                      navigate("/blogs");
-                    } catch (err) {
-                      alert("Failed to delete blog post");
-                    }
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                <Trash2 className="h-4 w-4" /> Delete
-              </Button>
+              <ConfirmModal action={handleDelete} buttonText={"Delete Blog"} alertDescription="This Action cann't be undone"/>
+              
+   
             </div>
           </div>
         </CardHeader>
 
+        <Separator className="my-6" />
+
         <CardContent>
-          <Separator className="my-4" />
-          <div className="prose prose-lg max-w-full text-gray-800 leading-relaxed">
+          <div className="prose prose-lg dark:prose-invert max-w-none">
             {blog.content.split("\n").map((paragraph, index) => (
-              <p key={index} className="mb-4">
+              <p key={index} className="mb-6 leading-relaxed">
                 {paragraph}
               </p>
             ))}
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-start">
+        <CardFooter className="mt-8">
           <Button onClick={() => navigate("/blogs")} variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Blogs

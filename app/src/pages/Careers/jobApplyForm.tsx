@@ -8,6 +8,7 @@ import { X, Upload, Building2, MapPin } from 'lucide-react';
 import { uploadPdf } from '@/actions/fileAction';
 import { applyJob } from '@/actions/jobApplication';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
 
 const MAX_COVER_LETTER_LENGTH = 2000;
 
@@ -23,7 +24,7 @@ const JobApplicationModal = ({ job, onClose }) => {
   
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
-
+  const {toast}=useToast()
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'coverLetter' && value.length > MAX_COVER_LETTER_LENGTH) {
@@ -66,6 +67,9 @@ const JobApplicationModal = ({ job, onClose }) => {
     }
     const res = await applyJob(formData);
     console.log(res);
+    toast({
+      title:"Job Applied Successfully"
+    })
     onClose();
   };
 

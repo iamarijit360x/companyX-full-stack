@@ -59,16 +59,25 @@ const rejectAllInProgress = async (req, res) => {
         const applications = await JobApplication.find({
             status: "In Progress",
             jobId: new mongoose.Types.ObjectId(jobId),
-        });
+        }).populate(jobId);
 
         // Extract CV file paths/URLs from the applications
         const cvs = applications.map(application => application.cv);
+        
 
         // Pass the CVs to the deletePdf function
-        if (cvs.length > 0) {
-            utilsService.deletePdf(cvs);  // Assuming deletePdf can handle an array of CV paths
+        try {
+            await Promise.all(cvs.map(cv => utilsService.deletePdf(cv)));
+        } catch (error) {
+            console.error('Failed to delete one or more CVs:', error);
+            // Handle the error
         }
-
+        try {
+           await emailService.sendRejectionEmail(applications)
+        } catch (error) {
+            console.error('Failed to send Email', error);
+            // Handle the error
+        }
         // Update the status of applications and job
         const result = await JobApplication.updateMany(
             { status: "In Progress", jobId: new mongoose.Types.ObjectId(jobId) },

@@ -1,4 +1,4 @@
-const rejectionEmail = (applicantData) => {
+exports.rejectionEmail = (applicantData) => {
     const { name, appliedRole } = applicantData;
     return `<!DOCTYPE html>
   <html>
@@ -144,15 +144,13 @@ const rejectionEmail = (applicantData) => {
               <p>Dear ${name},</p>
               <p>Thank you for your interest in the <strong>${appliedRole}</strong> position at [Your Company] and for taking the time to go through our application process.</p>
               
-             
-              
               <p>While we were impressed with your qualifications, we have decided to move forward with other candidates whose experience more closely matches our current needs.</p>
               
               <p>We encourage you to apply for future positions that align with your skills and experience. We will keep your application on file for any suitable openings.</p>
           </div>
           <div class="footer">
               <p>Best regards,</p>
-              <p class="company-name">Compnay X</p>
+              <p class="company-name">Company X</p>
               <div class="button-group">
                   <a href="[Your Website URL]" class="button">Visit our website</a>
                   <a href="[Careers Page URL]" class="button">View other opportunities</a>
@@ -161,6 +159,5 @@ const rejectionEmail = (applicantData) => {
       </div>
   </body>
   </html>`;
-  };
-  
-  module.exports = rejectionEmail;
+};
+

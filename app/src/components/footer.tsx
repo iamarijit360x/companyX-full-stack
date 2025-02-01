@@ -1,106 +1,109 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, ExternalLink } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="border-t dark:border-gray-800 border-gray-200">
+      <div className="container mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">Company Name</h3>
-            <p className="text-gray-400">
+            <h3 className="text-lg font-semibold dark:text-gray-200">Company Name</h3>
+            <p className="text-sm text-muted-foreground">
               We are a leading company in the industry, providing top-notch services and solutions to our clients.
             </p>
-            <div className="flex space-x-4">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Facebook className="h-5 w-5" />
+            <div className="flex space-x-2">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Facebook className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Twitter className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Twitter className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Instagram className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Instagram className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Linkedin className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Linkedin className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Home
+            <h3 className="text-lg font-semibold dark:text-gray-200">Quick Links</h3>
+            <nav className="space-y-2 text-sm">
+              {[
+                ['Home', '#'],
+                ['About Us', '#'],
+                ['Services', '#'],
+                ['Careers', '#'],
+                ['Contact', '#'],
+              ].map(([title, href]) => (
+                <a
+                  key={title}
+                  href={href}
+                  className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ExternalLink className="mr-2 h-3 w-3" />
+                  {title}
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Services
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Contact Us
-                </a>
-              </li>
-            </ul>
+              ))}
+            </nav>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">Contact Us</h3>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Mail className="h-5 w-5 text-gray-400" />
-                <p className="text-gray-400">info@company.com</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="h-5 w-5 text-gray-400" />
-                <p className="text-gray-400">+1 (123) 456-7890</p>
-              </div>
+            <h3 className="text-lg font-semibold dark:text-gray-200">Contact</h3>
+            <div className="space-y-3 text-sm">
+              <a 
+                href="mailto:info@company.com" 
+                className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Mail className="mr-2 h-4 w-4" />
+                info@company.com
+              </a>
+              <a 
+                href="tel:+11234567890" 
+                className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Phone className="mr-2 h-4 w-4" />
+                +1 (123) 456-7890
+              </a>
             </div>
           </div>
 
           {/* Newsletter */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">Subscribe to Our Newsletter</h3>
-            <p className="text-gray-400">
-              Stay updated with our latest news and promotions.
+            <h3 className="text-lg font-semibold dark:text-gray-200">Newsletter</h3>
+            <p className="text-sm text-muted-foreground">
+              Stay updated with our latest news and updates.
             </p>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                className="h-9"
               />
-              <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
+              <Button variant="secondary" className="h-9">
                 Subscribe
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">
+        <Separator className="my-8" />
+
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+          <p>
             &copy; {new Date().getFullYear()} Company Name. All rights reserved.
           </p>
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
+          </div>
         </div>
       </div>
     </footer>

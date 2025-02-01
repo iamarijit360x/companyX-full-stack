@@ -46,7 +46,7 @@ const Home = () => {
             <p className="text-xl mb-8">
               We're looking for exceptional people to help us create technology that matters.
             </p>
-            <Link to="/careers/jobs">
+            <Link to="/career">
               <Button size="lg" variant="outline" className="font-semibold">
                 View Open Positions
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -83,8 +83,8 @@ const Home = () => {
               <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
                 <CardContent>
                   <div className="flex justify-center">{benefit.icon}</div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">{benefit.title}</h3>
-                  <p className="text-gray-600">{benefit.description}</p>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-200">{benefit.title}</h3>
+                  <p className="text-gray-100">{benefit.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -101,12 +101,7 @@ const Home = () => {
           <p className="text-xlmb-8 max-w-2xl mx-auto">
             Join our team of passionate individuals working to solve meaningful problems.
           </p>
-          <Link to="/career">
-            <Button size="lg" variant="outline" className="font-semibold">
-              Explore Opportunities
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+          
         </div>
       </div>
     </div>

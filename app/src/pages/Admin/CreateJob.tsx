@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { 
   Select, 
   SelectContent, 
@@ -136,28 +136,35 @@ const AdminJobPostingPage = () => {
         description: 'Job posting created successfully!',
       });
       
-      setJobPosting({
-        title: '',
-        department: '',
-        location: '',
-        description: '',
-        requirements: '',
-        type: 'Full-time'
-      });
       navigate('/admin/jobs');
     } catch (error) {
       console.error('Error creating job:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create job posting. Please try again.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/admin/jobs')}
+          className="flex items-center text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Jobs
+        </Button>
+      </div>
+
       <motion.h1 
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl md:text-3xl font-bold mb-6 text-center"
+        className="text-3xl md:text-4xl font-bold mb-8 text-center"
       >
         Create Job Posting
       </motion.h1>
@@ -165,22 +172,22 @@ const AdminJobPostingPage = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="w-full max-w-4xl mx-auto"
+        className="w-full"
       >
-        <Card>
-          <CardHeader>
-            <CardTitle>Job Details</CardTitle>
+        <Card className="shadow-lg">
+          <CardHeader className="border-b">
+            <CardTitle className="text-2xl">Job Details</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
                   <Input
                     name="title"
                     value={jobPosting.title}
                     onChange={handleInputChange}
                     placeholder="Job Title"
-                    className={errors.title ? 'border-red-500' : ''}
+                    className={`h-12 text-lg ${errors.title ? 'border-red-500' : ''}`}
                   />
                   {errors.title && (
                     <p className="text-red-500 text-sm mt-1">{errors.title}</p>
@@ -196,7 +203,7 @@ const AdminJobPostingPage = () => {
                       setErrors(prev => ({ ...prev, department: undefined }));
                     }}
                   >
-                    <SelectTrigger className={errors.department ? 'border-red-500' : ''}>
+                    <SelectTrigger className={`h-12 ${errors.department ? 'border-red-500' : ''}`}>
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -221,7 +228,7 @@ const AdminJobPostingPage = () => {
                       setErrors(prev => ({ ...prev, location: undefined }));
                     }}
                   >
-                    <SelectTrigger className={errors.location ? 'border-red-500' : ''}>
+                    <SelectTrigger className={`h-12 ${errors.location ? 'border-red-500' : ''}`}>
                       <SelectValue placeholder="Select Location" />
                     </SelectTrigger>
                     <SelectContent>
@@ -246,7 +253,7 @@ const AdminJobPostingPage = () => {
                       type: value
                     }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                       <SelectValue placeholder="Job Type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -265,8 +272,8 @@ const AdminJobPostingPage = () => {
                     value={jobPosting.description}
                     onChange={handleInputChange}
                     placeholder="Job Description"
-                    rows={4}
-                    className={errors.description ? 'border-red-500' : ''}
+                    rows={6}
+                    className={`min-h-[150px] text-base ${errors.description ? 'border-red-500' : ''}`}
                   />
                   {errors.description && (
                     <p className="text-red-500 text-sm mt-1">{errors.description}</p>
@@ -279,24 +286,33 @@ const AdminJobPostingPage = () => {
                     value={jobPosting.requirements}
                     onChange={handleInputChange}
                     placeholder="Requirements (one per line)"
-                    rows={4}
-                    className={errors.requirements ? 'border-red-500' : ''}
+                    rows={6}
+                    className={`min-h-[150px] text-base ${errors.requirements ? 'border-red-500' : ''}`}
                   />
                   {errors.requirements && (
                     <p className="text-red-500 text-sm mt-1">{errors.requirements}</p>
                   )}
                 </div>
 
-                <div className="md:col-span-2 flex justify-end">
+                <div className="md:col-span-2 flex gap-4 justify-end">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    size="lg"
+                    onClick={() => navigate('/admin/jobs')}
+                    className="w-full md:w-auto"
+                  >
+                    Cancel
+                  </Button>
                   <Button 
                     type="submit" 
-                    size="sm"
+                    size="lg"
                     className="w-full md:w-auto"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         Creating...
                       </>
                     ) : (

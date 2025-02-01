@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const {toast}=useToast();
+  const [email,setEmail]=useState('')
+  const navigate=useNavigate()
+  const handleSubscribeToNewsLetter=()=>{
+    if(!email)
+    {
+      toast({
+        title:"Please Enter Email!",
+        description:"Sorry But This Feature is not implemented yet",
+        variant:'destructive'
+      })
+    }
+    toast({
+      title:"Subcribed to New Letter!",
+      description:"Sorry But This Feature is not implemented yet"
+    })
+  }
   return (
     <footer className="border-t dark:border-gray-800 border-gray-200">
       <div className="container mx-auto px-6 py-12">
@@ -36,16 +55,16 @@ const Footer = () => {
             <h3 className="text-lg font-semibold dark:text-gray-200">Quick Links</h3>
             <nav className="space-y-2 text-sm">
               {[
-                ['Home', '#'],
-                ['About Us', '#'],
-                ['Services', '#'],
-                ['Careers', '#'],
-                ['Contact', '#'],
+                ['Home', '/'],
+                ['About Us', '/portfolio'],
+                ['Services', '/service'],
+                ['Careers', '/career'],
+                ['Contact', '/contact-us'],
               ].map(([title, href]) => (
                 <a
                   key={title}
-                  href={href}
-                  className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={()=>navigate(href)}
+                  className="flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   <ExternalLink className="mr-2 h-3 w-3" />
                   {title}
@@ -85,9 +104,11 @@ const Footer = () => {
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="h-9"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="email-input h-9"
               />
-              <Button variant="secondary" className="h-9">
+              <Button onClick={handleSubscribeToNewsLetter} variant="secondary" className="h-9">
                 Subscribe
               </Button>
             </div>

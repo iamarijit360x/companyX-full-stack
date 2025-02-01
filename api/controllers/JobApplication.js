@@ -156,7 +156,7 @@ const fetchApplicationById = async (req, res) => {
     const {id}=req.params;
     try {
 
-        const applications = await JobApplication.findById(id)
+        const applications = await JobApplication.findById(id).populate('jobId')
         
         res.send(
             applications

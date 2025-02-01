@@ -194,7 +194,7 @@ const JobApplicantsList = () => {
                         <ConfirmModal
                             buttonText="Reject All"
                             action={handlerejectAllCandidates}
-                            alertDescription="This action will reject all candidates. This cannot be undone."
+                            alertDescription="This action will reject all candidates and Delete the asociated resumes. This cannot be undone."
                         />
                     )}
                 </div>
@@ -257,7 +257,7 @@ const JobApplicantsList = () => {
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, x: -20 }}
                                             transition={{ duration: 0.3 }}
-                                            className="hover:bg-gray-50"
+                                            className="hover:bg-gray-50 dark:hover:bg-gray-900"
                                         >
                                             <TableCell className="font-medium">{applicant.name}</TableCell>
                                             <TableCell>{applicant.email}</TableCell>

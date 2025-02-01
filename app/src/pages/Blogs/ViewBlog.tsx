@@ -82,7 +82,7 @@ const BlogView = () => {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-4">
+    <div className="container min-h-screen mx-auto p-4">
       <Card className="border-none shadow-none">
         <CardHeader className="space-y-4">
           <div className="flex justify-between items-start flex-wrap gap-4">

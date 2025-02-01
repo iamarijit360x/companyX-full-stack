@@ -5,9 +5,9 @@ const Job = require('../models/Job');
 const { Blog } = require('../models/Blogs');
 const dotenv = require('dotenv');
 
-
+//PUT MONGODB URL
 mongoose.connect('')
- async function createUser(name, email, password, isAdmin = false) {
+ async function createUser(name, email, password, isAdmin = true) {
    
         const user = await User.create({ name, email, password, isAdmin });
         console.log(user)
@@ -15,6 +15,48 @@ mongoose.connect('')
 const LOCATIONS = [
     'Remote', 'San Francisco, CA', 'New York, NY',
     'Austin, TX', 'Chicago, IL', 'Seattle, WA', 'Boston, MA'
+];
+
+const jobRequirements = [
+    "2+ years of experience in software development",
+    "Proficiency in React and JavaScript",
+    "Experience with RESTful APIs",
+    "Strong knowledge of HTML, CSS, and JavaScript",
+    "Experience with version control tools like Git",
+    "Familiarity with Agile and Scrum methodologies",
+    "Experience with state management libraries like Redux",
+    "Ability to write clean, maintainable code",
+    "Good understanding of responsive design principles",
+    "Experience with testing frameworks (e.g., Jest, Mocha)",
+    "Strong problem-solving and debugging skills",
+    "Excellent communication and teamwork skills",
+    "Experience with database management systems (e.g., MySQL, MongoDB)",
+    "Familiarity with cloud services (AWS, Azure, Google Cloud)",
+    "Experience in deploying applications on cloud platforms",
+    "Ability to work in a fast-paced environment",
+    "Understanding of security best practices in web development",
+    "Experience with CI/CD pipelines",
+    "Bachelor's degree in Computer Science or related field (or equivalent experience)",
+    "Strong understanding of algorithms and data structures",
+    "Experience with Node.js or other backend technologies",
+    "Familiarity with containerization technologies (e.g., Docker, Kubernetes)",
+    "Experience with microservices architecture",
+    "Knowledge of performance optimization techniques",
+    "Familiarity with web accessibility standards",
+    "Experience in building and consuming GraphQL APIs",
+    "Experience with mobile-first design and development",
+    "Experience working with a code editor like VS Code or Sublime Text",
+    "Ability to learn new technologies quickly",
+    "Experience working in cross-functional teams",
+    "Experience with data visualization libraries (e.g., D3.js, Chart.js)",
+    "Knowledge of serverless computing frameworks",
+    "Familiarity with UX/UI design principles",
+    "Strong attention to detail in writing code and documentation",
+    "Experience with authentication and authorization techniques",
+    "Experience with automated testing and TDD",
+    "Ability to handle code reviews and provide constructive feedback",
+    "Experience with task management tools (e.g., Jira, Trello)",
+    "Familiarity with server-side rendering (SSR) frameworks (e.g., Next.js)",
 ];
 
 const DEPARTMENTS = [
@@ -32,22 +74,59 @@ const DEPARTMENTS = [
 ];
 
 const JOB_TYPES = [
-    'Full-time', 'Part-time', 'Contract', 'Internship' // Directly use the values
+    'Full-time', 'Part-time', 'Contract', 'Internship'
 ];
+
+const getRandomRequirements = (num) => {
+    const selectedRequirements = [];
+    const shuffled = [...jobRequirements].sort(() => 0.5 - Math.random()); // Shuffle the array
+
+    for (let i = 0; i < num; i++) {
+        selectedRequirements.push(shuffled[i]); // Select 'num' random items
+    }
+
+    return selectedRequirements;
+};
 
 async function createJobs() {
     try {
         const jobs = [];
         for (let i = 0; i < 20; i++) { // Create 20 sample jobs
+            const jobTitle = [
+                "Software Engineer",
+                "Frontend Developer",
+                "Backend Developer",
+                "Full Stack Developer",
+                "Product Manager",
+                "UI/UX Designer",
+                "DevOps Engineer",
+                "Data Scientist",
+                "QA Engineer",
+                "Marketing Specialist"
+            ];
+            const jobDescriptions = [
+                "Join our team to build cutting-edge software solutions and deliver scalable, high-performance products.",
+                "Work with our design and product teams to create responsive, user-friendly web applications.",
+                "Lead and develop backend services and systems to support large-scale web applications.",
+                "As a full-stack developer, you will be responsible for both frontend and backend development.",
+                "Collaborate with stakeholders to define and drive product strategy, managing feature development from start to finish.",
+                "Design and prototype user interfaces, ensuring a seamless and intuitive experience for all users.",
+                "Develop and maintain infrastructure and deployment pipelines to streamline DevOps workflows.",
+                "Analyze and interpret complex data to provide actionable insights and help guide business decisions.",
+                "Test and ensure the quality of our software products through rigorous manual and automated testing.",
+                "Work with marketing teams to craft and execute campaigns aimed at expanding our customer base."
+            ];
+
             const job = {
-                title: `Job Title ${i + 1}`,
-                description: `Job Description ${i + 1}.  This is a great opportunity`,
-                requirements: `["Must have experience in C++","2+ Years Expereince"]`,
+                title: `${jobTitle[Math.floor(Math.random() * jobTitle.length)]} ${i + 1}`,
+                description: `${jobDescriptions[Math.floor(Math.random() * jobDescriptions.length)]} This is a great opportunity to join a forward-thinking team.`,
+                requirements: `${getRandomRequirements(6)}`,
                 location: LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)],
                 department: DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)],
                 type: JOB_TYPES[Math.floor(Math.random() * JOB_TYPES.length)],
                 status: 'Active' // You can randomize this if needed
             };
+
             jobs.push(job);
         }
 
@@ -57,6 +136,7 @@ async function createJobs() {
         console.error("Error creating jobs:", error);
     }
 }
+
 
 
 async function createBlogs() {
@@ -178,9 +258,9 @@ async function createBlogs() {
 
 (async () => {
     try {
+        // await createUser('Arijit','test@example.com','abcd@123');
         await createJobs();
         // await createBlogs();
-        console.log("User created successfully!");
     } catch (error) {
         console.error("Error creating user:", error);
     }

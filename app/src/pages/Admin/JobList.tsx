@@ -43,9 +43,11 @@ const AdminJobsList = () => {
                 const data = response.data.jobs.map(job => ({
                     id: job._id,
                     title: job.title,
+                    department: job.department,
                     location: job.location,
                     postDate: job.createdAt,
-                    status: job.type
+                    status: job.status,
+                    type:job.type
                 }));
                 setJobs(data);
                 setTotalPages(response.data.totalPages);
@@ -165,6 +167,15 @@ const AdminJobsList = () => {
                                 </div>
                             </TableHead>
                             <TableHead
+                                onClick={() => handleSort('department')}
+                                className="cursor-pointer hover:bg-muted transition-colors font-medium"
+                            >
+                                <div className="flex items-center">
+                                    Department
+                                    <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
+                                </div>
+                            </TableHead>
+                            <TableHead
                                 onClick={() => handleSort('location')}
                                 className="cursor-pointer hover:bg-muted transition-colors font-medium"
                             >
@@ -183,7 +194,7 @@ const AdminJobsList = () => {
                                 </div>
                             </TableHead>
                             <TableHead className="font-medium">Status</TableHead>
-                            <TableHead className="font-medium">Actions</TableHead>
+                            {/* <TableHead className="font-medium">Actions</TableHead> */}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -194,6 +205,7 @@ const AdminJobsList = () => {
                                 className="cursor-pointer hover:bg-muted/50 transition-colors"
                             >
                                 <TableCell className="font-medium">{job.title}</TableCell>
+                                <TableCell className="font-medium">{job.department}</TableCell>
                                 <TableCell>{job.location}</TableCell>
                                 <TableCell className="text-muted-foreground">{convertISOToDate(job.postDate)}</TableCell>
                                 <TableCell>
@@ -201,7 +213,7 @@ const AdminJobsList = () => {
                                         {job.status}
                                     </span>
                                 </TableCell>
-                                <TableCell>
+                                {/* <TableCell>
                                     <div className="flex space-x-2">
                                         <Button
                                             variant="ghost"
@@ -220,7 +232,7 @@ const AdminJobsList = () => {
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </div>
-                                </TableCell>
+                                </TableCell> */}
                             </TableRow>
                         ))}
                     </TableBody>

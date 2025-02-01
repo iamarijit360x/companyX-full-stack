@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from '@/hooks/use-toast';
 import { createBlog } from '@/actions/blogActions';
 import { useAuth } from '@/middleware/authContext';
+import { ArrowLeft } from 'lucide-react';
 
 const CreateBlog = () => {
-  const {isAuthenticated}=useAuth()
+  const {isAuthenticated} = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -42,14 +43,13 @@ const CreateBlog = () => {
 
     try {
       setLoading(true);
-      await createBlog(formData)
+      await createBlog(formData);
       
       toast({
         title: "Success",
         description: "Blog post created successfully!",
       });
       
-      // Redirect to blogs page
       navigate('/blogs');
       
     } catch (error) {
@@ -64,78 +64,89 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Create New Blog Post</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium">
-                Title
-              </label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Enter blog title"
-                className="w-full"
-                required
-              />
-            </div>
+    <div className="min-h-screen p-8">
+      <div className="max-w-4xl mx-auto">
+        <Button
+          variant="outline"
+          className="mb-6 flex items-center gap-2"
+          onClick={() => navigate('/blogs')}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Blogs
+        </Button>
 
-            <div className="space-y-2">
-              <label htmlFor="author" className="text-sm font-medium">
-                Author
-              </label>
-              <Input
-                id="author"
-                name="author"
-                value={formData.author}
-                onChange={handleChange}
-                placeholder="Enter author name"
-                className="w-full"
-                required
-              />
-            </div>
+        <Card className="shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-3xl font-bold text-center">Create New Blog Post</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-medium">
+                  Title
+                </label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Enter blog title"
+                  className="w-full h-12"
+                  required
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor="content" className="text-sm font-medium">
-                Content
-              </label>
-              <Textarea
-                id="content"
-                name="content"
-                value={formData.content}
-                onChange={handleChange}
-                placeholder="Write your blog content here..."
-                className="min-h-[200px] w-full"
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="author" className="text-sm font-medium">
+                  Author
+                </label>
+                <Input
+                  id="author"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleChange}
+                  placeholder="Enter author name"
+                  className="w-full h-12"
+                  required
+                />
+              </div>
 
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => navigate('/blogs')}
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? 'Creating...' : 'Create Blog Post'}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <label htmlFor="content" className="text-sm font-medium">
+                  Content
+                </label>
+                <Textarea
+                  id="content"
+                  name="content"
+                  value={formData.content}
+                  onChange={handleChange}
+                  placeholder="Write your blog content here..."
+                  className="min-h-[400px] w-full resize-y"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-6 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full h-12 text-base"
+                  onClick={() => navigate('/blogs')}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 text-base"
+                  disabled={loading}
+                >
+                  {loading ? 'Creating...' : 'Create Blog Post'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,21 @@ const JobApplicationModal = ({ job, onClose }) => {
     cv: null,
     coverLetter: ''
   });
-  
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose(); // Close modal if clicked outside
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
   const {toast}=useToast()
@@ -74,13 +88,14 @@ const JobApplicationModal = ({ job, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto">
-      <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto px-11">
+      <div className="min-h-screen flex items-center justify-center p-4 ">
         <motion.div
+          ref={modalRef}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="w-full max-w-5xl my-8"
+          className="w-full max-w-7xl my-8"
         >
           <Card className="border-0 shadow-xl">
             <CardHeader className="space-y-6 p-8">

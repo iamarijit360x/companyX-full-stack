@@ -2,10 +2,10 @@ import { useState } from "react";
 import NavLinks from "./nav-links";
 import { ThemeToggle } from "@/components/theme-toggle";
 import H4 from "@/components/typo/H4";
-import {  Menu, X } from "lucide-react"; // Import Menu and X icons for the hamburger menu
-import {  useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react"; // Import Menu and X icons for the hamburger menu
+import { useNavigate } from "react-router-dom";
 
-const Navbar = ({}) => {
+const Navbar = ({ }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu visibility
 
@@ -37,7 +37,7 @@ const Navbar = ({}) => {
       {/* Mobile Navigation Links */}
       {isMenuOpen && (
         <div className="fixed top-16 left-0 w-full h-screen bg-background/95 backdrop-blur-md flex flex-col items-center justify-center gap-6 md:hidden">
-          <NavLinks />
+          <NavLinks closeMenu={() => setIsMenuOpen(false)} />
           <ThemeToggle />
         </div>
       )}

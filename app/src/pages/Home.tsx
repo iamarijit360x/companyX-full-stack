@@ -83,8 +83,8 @@ const Home = () => {
               <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
                 <CardContent>
                   <div className="flex justify-center">{benefit.icon}</div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-200">{benefit.title}</h3>
-                  <p className="text-gray-100">{benefit.description}</p>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-700 dark:text-white">{benefit.title}</h3>
+                  <p className="text-gray-700 dark:text-white">{benefit.description}</p>
                 </CardContent>
               </Card>
             ))}

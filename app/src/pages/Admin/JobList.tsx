@@ -15,11 +15,13 @@ import {
     Plus,
     Edit,
     Trash2,
-    Search
+    Search,
+    ArrowBigLeft
 } from 'lucide-react';
 import { fetchJobs } from '@/actions/jobActions';
 import { convertISOToDate } from '@/lib/utils';
 import { stat } from 'fs';
+import BackendLoadingBackdrop from '@/components/backEndLoadingDrop';
 
 const AdminJobsList = () => {
     const [jobs, setJobs] = useState([]);
@@ -33,10 +35,11 @@ const AdminJobsList = () => {
     const [limit, setLimit] = useState(10);
     const navigate = useNavigate();
     const [status, setStatus] = useState('Active')
+    const [isLoading,setIsLoading]=useState(true);
     useEffect(() => {
         const loadJobs = async () => {
             try {
-                const response = await fetchJobs(currentPage, limit,status);
+                const response = await fetchJobs(currentPage, limit, status);
                 const data = response.data.jobs.map(job => ({
                     id: job._id,
                     title: job.title,
@@ -49,10 +52,13 @@ const AdminJobsList = () => {
             } catch (error) {
                 console.error('Error fetching jobs:', error);
             }
+            finally{
+                setIsLoading(false)
+            }
         };
 
         loadJobs();
-    }, [currentPage, limit,status]);
+    }, [currentPage, limit, status]);
 
     const sortedJobs = useMemo(() => {
         let sortableJobs = [...jobs];
@@ -100,16 +106,28 @@ const AdminJobsList = () => {
 
     return (
         <div className="w-full max-w-[95%] mx-auto p-8 h-screen">
+            <BackendLoadingBackdrop isLoading={isLoading}/>
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-light tracking-tight">Job Listings</h1>
-                <Button
-                    onClick={() => navigate('/admin/create-job')}
-                    className="hover:bg-accent transition-colors"
-                    variant="outline"
-                >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Post A Job
-                </Button>
+                <h2 className="text-3xl font-light tracking-tight">Job Listings</h2>
+                <div>
+                    <Button
+                        onClick={() => navigate('/admin/create-job')}
+                        className="hover:bg-accent transition-colors"
+                        variant="outline"
+                    >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Post A Job
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate('/admin/')}
+                        className="hover:bg-accent transition-colors ml-1"
+                        >
+                        <ArrowBigLeft className="h-4 w-4 mr-2" />
+                        Go Back to Dashboard
+                    </Button>
+                </div>
+
             </div>
             <div className="flex items-center space-x-2 mb-8">
                 <span className="text-sm text-muted-foreground">Filter by Status:</span>

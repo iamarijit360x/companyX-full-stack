@@ -2,41 +2,60 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogOut, LucideIcon } from "lucide-react";
 import { Group, Briefcase, FileText, Phone, BookOpen, UserCircle2 } from "lucide-react";
 import { useAuth } from "@/middleware/authContext";
-import { useState } from "react";
 
-type NavLinkItemProps = { title: string; icon: LucideIcon; redirect: string; onClick?: () => void };
+type NavLinkItemProps = {
+  title: string;
+  icon: LucideIcon;
+  redirect: string;
+  onClick?: () => void;
+  show?: boolean;
+  closeMenu?: () => void;
+};
 
-
-const NavLinkItem = ({ title, icon, redirect, onClick }: NavLinkItemProps) => {
-  const Icon = icon;
+const NavLinkItem = ({ title, icon: Icon, redirect, onClick, closeMenu }: NavLinkItemProps) => {
+  const handleClick = () => {
+    closeMenu?.();
+    onClick?.();
+  };
 
   if (title === "Logout") {
     return (
-      <button
-        onClick={onClick}
-        className="flex items-center justify-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full text-left"
-      >
-        <Icon size={20} />
-        <span>{title}</span>
-      </button>
+      <li>
+        <button
+          onClick={handleClick}
+          className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full text-left"
+        >
+          <Icon size={20} />
+          <span>{title}</span>
+        </button>
+      </li>
     );
   }
 
   return (
-    <Link
-      to={redirect}
-      className="flex items-center justify-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors"
-    >
-      <Icon size={20} />
-      <span>{title}</span>
-    </Link>
+    <li>
+      <Link
+        to={redirect}
+        onClick={closeMenu}
+        className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors"
+      >
+        <Icon size={20} />
+        <span>{title}</span>
+      </Link>
+    </li>
   );
 };
 
-const NavLinks = () => {
-  const {isAuthenticated,logout} = useAuth()
-  const navigate=useNavigate()
-  const itemsArray = [
+const NavLinks = ({ closeMenu }: { closeMenu?: () => void }) => {
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const itemsArray: NavLinkItemProps[] = [
     {
       title: "Services",
       icon: Briefcase,
@@ -62,31 +81,31 @@ const NavLinks = () => {
       icon: BookOpen,
       redirect: "/blogs",
     },
-
     {
       title: "Admin",
       icon: UserCircle2,
-      redirect: isAuthenticated?"/admin/":"/admin/login",
+      redirect: isAuthenticated ? "/admin/" : "/admin/login",
     },
     {
       title: "Logout",
       icon: LogOut,
-      redirect: "#", // Placeholder, since we're using onClick
-      show: isAuthenticated, // Only show if authenticated
-      onClick: () => {
-       logout()
-        navigate('/')
-       
-      }
+      redirect: "#",
+      show: isAuthenticated,
+      onClick: handleLogout,
     },
   ];
 
   return (
-    <ul className="flex flex-col md:flex-row items-center justify-between gap-4">
-      {itemsArray.map((item, index) => {
-        if (item.show === false) return null; // Skip rendering if show is false
-        return <NavLinkItem key={index} {...item} />;
-      })}
+    <ul className="flex flex-col md:flex-row items-center gap-4">
+      {itemsArray
+        .filter(item => item.show !== false)
+        .map((item, index) => (
+          <NavLinkItem 
+            key={`${item.title}-${index}`} 
+            {...item} 
+            closeMenu={closeMenu}
+          />
+        ))}
     </ul>
   );
 };

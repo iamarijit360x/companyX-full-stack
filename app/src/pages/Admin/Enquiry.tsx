@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { getEnquires, markAsResolved } from '@/actions/enquiryActions';
 import ConfirmModal from '@/components/dialogBox';
+import BackendLoadingBackdrop from '@/components/backEndLoadingDrop';
 
 const EnquiryView = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -51,7 +52,7 @@ const EnquiryView = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen">
+    <><BackendLoadingBackdrop isLoading={loading} /><div className="container mx-auto px-4 py-8 min-h-screen">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Enquiries</h1>
         <p className="text-gray-600">Manage and track all your enquiries</p>
@@ -83,11 +84,9 @@ const EnquiryView = () => {
               <CardHeader>
                 <CardTitle className="flex justify-between items-center">
                   <span className="truncate">{enquiry.subject}</span>
-                  <span className={`text-sm px-3 py-1 rounded-full ${
-                    enquiry.status === 'Pending' 
-                      ? 'bg-yellow-100 text-yellow-800' 
-                      : 'bg-green-100 text-green-800'
-                  }`}>
+                  <span className={`text-sm px-3 py-1 rounded-full ${enquiry.status === 'Pending'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-green-100 text-green-800'}`}>
                     {enquiry.status}
                   </span>
                 </CardTitle>
@@ -101,7 +100,7 @@ const EnquiryView = () => {
                   </p>
                 </div>
               </CardContent>
-              {enquiry.status!=='Resolved' && <CardFooter><ConfirmModal action={async ()=>{await markAsResolved(enquiry._id);fetchEnquiries();}} buttonText={"Mark as Resolved"} alertDescription='This Action goinig to mark as resolved this ticket'/></CardFooter>}
+              {enquiry.status !== 'Resolved' && <CardFooter><ConfirmModal action={async () => { await markAsResolved(enquiry._id); fetchEnquiries(); } } buttonText={"Mark as Resolved"} alertDescription='This Action goinig to mark as resolved this ticket' /></CardFooter>}
             </Card>
           ))}
         </div>
@@ -116,21 +115,19 @@ const EnquiryView = () => {
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        
+
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index + 1}
             onClick={() => handlePageChange(index + 1)}
-            className={`w-8 h-8 rounded-lg ${
-              currentPage === index + 1
+            className={`w-8 h-8 rounded-lg ${currentPage === index + 1
                 ? 'bg-gray-900 text-white'
-                : 'hover:bg-gray-100'
-            }`}
+                : 'hover:bg-gray-100'}`}
           >
             {index + 1}
           </button>
         ))}
-        
+
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
@@ -139,7 +136,7 @@ const EnquiryView = () => {
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
-    </div>
+    </div></>
   );
 };
 

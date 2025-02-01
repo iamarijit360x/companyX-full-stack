@@ -16,6 +16,7 @@ import { fetchJobs, createJob } from '@/actions/jobActions';
 import JobApplicationModal from './jobApplyForm';
 import { useAuth } from '@/middleware/authContext';
 import { useNavigate } from 'react-router-dom';
+import BackendLoadingBackdrop from '@/components/backEndLoadingDrop';
 
 const CareerPage = () => {
   const [jobs, setJobs] = useState([]);
@@ -66,6 +67,7 @@ const CareerPage = () => {
 
   return (
     <div className="min-h-screen py-16 px-6">
+      <BackendLoadingBackdrop isLoading={loading} />
       <AnimatePresence>
         {selectedJob && <JobApplicationModal job={selectedJob} onClose={() => setSelectedJob(null)} />}
       </AnimatePresence>

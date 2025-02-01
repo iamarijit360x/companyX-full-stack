@@ -147,7 +147,7 @@ class TemplateService {
               </div>
               <div class="content">
                   <p>Dear ${name},</p>
-                  <p>Thank you for your interest in the <strong>${appliedRole}</strong> position at [Your Company] and for taking the time to go through our application process.</p>
+                  <p>Thank you for your interest in the <strong>${appliedRole}</strong> position at CompanyX and for taking the time to go through our application process.</p>
                   
                   <p>While we were impressed with your qualifications, we have decided to move forward with other candidates whose experience more closely matches our current needs.</p>
                   
@@ -309,7 +309,7 @@ class TemplateService {
             </div>
             <div class="content">
                 <p>Dear ${name},</p>
-                <p>We are thrilled to inform you that after a thorough review of all candidates, you have been selected for the <strong>${appliedRole}</strong> position at [Your Company]!</p>
+                <p>We are thrilled to inform you that after a thorough review of all candidates, you have been selected for the <strong>${appliedRole}</strong> position at CompanyX!</p>
                 <p>Your skills, experience, and enthusiasm stood out during the interview process, and we are excited to welcome you to our team.</p>
                 <div class="message-box">
                     <p>Next steps:</p>

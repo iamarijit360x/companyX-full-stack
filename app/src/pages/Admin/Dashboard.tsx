@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Briefcase, FileText, TrendingUp, Plus } from 'lucide-react';
+import { Calendar, Users, Briefcase, FileText, TrendingUp, Plus, Loader2 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import {
   Select,
   SelectContent,
@@ -17,14 +18,17 @@ import {
 } from "@/components/ui/select";
 import { fetchRecentBlogs, fetchRecentJobs, fetchStats } from '@/actions/dashboardAction';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '@/components/skeleton';
+import { Backdrop } from '@/components/backdrop';
+import BackendLoadingBackdrop from '@/components/backEndLoadingDrop';
 
-// Define types
+// Types remain the same
 interface Stats {
   totalBlogs: number;
   totalJobs: number;
   activeJobPostings: number;
   totalApplications: number;
-  enquiries:number
+  enquiries: number;
 }
 
 interface Job {
@@ -46,28 +50,81 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentJobs, setRecentJobs] = useState<Job[]>([]);
   const [recentBlogs, setRecentBlogs] = useState<Blog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showBackdrop, setShowBackdrop] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch stats
   useEffect(() => {
-    fetchStats(dateRange)
-      .then((data) => setStats(data))
-      .catch(() => setStats(null)); // Handle error case
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [statsData, jobsData, blogsData] = await Promise.all([
+          fetchStats(dateRange),
+          fetchRecentJobs(),
+          fetchRecentBlogs()
+        ]);
+        setStats(statsData);
+        setRecentJobs(jobsData);
+        setRecentBlogs(blogsData);
+
+      } catch (error) {
+        setStats(null);
+        setRecentJobs([]);
+        setRecentBlogs([]);
+
+      } finally {
+         setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, [dateRange]);
 
-  useEffect(() => {
-    fetchRecentJobs()
-      .then((data) => setRecentJobs(data))
-      .catch(() => setRecentJobs([]));
+  const StatCard = ({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) => (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <Skeleton className="h-8 w-20" />
+        ) : (
+          <div className="text-2xl font-bold">{value}</div>
+        )}
+      </CardContent>
+    </Card>
+  );
 
-    fetchRecentBlogs()
-      .then((data) => setRecentBlogs(data))
-      .catch(() => setRecentBlogs([]));
-  }, []);
+  const StatCardSkeleton = () => (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Skeleton className="h-4 w-[100px]" />
+        <Skeleton className="h-4 w-4" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-8 w-20" />
+      </CardContent>
+    </Card>
+  );
+
+  const ActivityItemSkeleton = () => (
+    <div className="flex items-center justify-between border-b pb-2">
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[200px]" />
+        <Skeleton className="h-3 w-[100px]" />
+      </div>
+      <Skeleton className="h-4 w-[50px]" />
+    </div>
+  );
+
+
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
+      <BackendLoadingBackdrop isLoading={isLoading}/>
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <Select value={dateRange} onValueChange={setDateRange}>
@@ -118,47 +175,37 @@ const Dashboard: React.FC = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Blogs</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalBlogs ?? 0}</div>
-          </CardContent>
-        </Card>
-
-        
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Job Posts</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.activeJobPostings ?? 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Enquries</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.enquiries ?? 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalApplications ?? 0}</div>
-          </CardContent>
-        </Card>
+        {isLoading ? (
+          <>
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </>
+        ) : (
+          <>
+            <StatCard
+              title="Total Blogs"
+              value={stats?.totalBlogs ?? 0}
+              icon={<FileText className="h-4 w-4 text-muted-foreground" />}
+            />
+            <StatCard
+              title="Active Job Posts"
+              value={stats?.activeJobPostings ?? 0}
+              icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+            />
+            <StatCard
+              title="Enquiries"
+              value={stats?.enquiries ?? 0}
+              icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+            />
+            <StatCard
+              title="Total Applications"
+              value={stats?.totalApplications ?? 0}
+              icon={<Users className="h-4 w-4 text-muted-foreground" />}
+            />
+          </>
+        )}
       </div>
 
       {/* Recent Activity Section */}
@@ -171,7 +218,13 @@ const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentJobs.length > 0 ? (
+              {isLoading ? (
+                <>
+                  <ActivityItemSkeleton />
+                  <ActivityItemSkeleton />
+                  <ActivityItemSkeleton />
+                </>
+              ) : recentJobs.length > 0 ? (
                 recentJobs.map((job) => (
                   <div
                     key={job._id}
@@ -193,7 +246,7 @@ const Dashboard: React.FC = () => {
               )}
             </div>
           </CardContent>
-          <CardFooter className="cursor-pointer" onClick={() => navigate(`/admin/jobs`)}>
+          <CardFooter className="cursor-pointer font-semibold" onClick={() => navigate(`/admin/jobs`)}>
             See All Jobs
           </CardFooter>
         </Card>
@@ -206,7 +259,13 @@ const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentBlogs.length > 0 ? (
+              {isLoading ? (
+                <>
+                  <ActivityItemSkeleton />
+                  <ActivityItemSkeleton />
+                  <ActivityItemSkeleton />
+                </>
+              ) : recentBlogs.length > 0 ? (
                 recentBlogs.map((blog) => (
                   <div
                     key={blog._id}
@@ -225,7 +284,7 @@ const Dashboard: React.FC = () => {
               )}
             </div>
           </CardContent>
-          <CardFooter className="cursor-pointer" onClick={() => navigate(`/blogs`)}>
+          <CardFooter className="cursor-pointer font-semibold" onClick={() => navigate(`/blogs`)}>
             See All Blogs
           </CardFooter>
         </Card>
